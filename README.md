@@ -1,4 +1,4 @@
-### Automated Cannabis Cultivation System with Arduino
+### Automated Cannabis Cultivation System with Arduino and Raspberry Pi + Pico
 
 #### Project Overview
 The Automated Cannabis Cultivation System uses Arduino to optimize the environment for cannabis growth, including temperature, CO2 levels, light scheduling, and nutrient management. The system incorporates a real-time clock (RTC) for precise timing and can be expanded with a hydroponic setup for more controlled nutrient delivery. An optional web interface allows for remote monitoring and control.
