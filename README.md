@@ -1,6 +1,6 @@
 ### Project Overview
 
-The Automated Cannabis Cultivation System is a sophisticated solution designed to optimize the growth environment for cannabis plants using Arduino and Raspberry Pi technology. The system precisely controls critical factors for plant health, such as temperature, CO2 levels, light schedules, and nutrient delivery. It also incorporates a Real-Time Clock (RTC) for accurate timing, enabling automated management of light cycles and environmental conditions. The system's data logging features provide insights into system performance and plant growth, while an optional web interface allows remote monitoring and control. Additionally, the system can be expanded to include hydroponic nutrient management for advanced cultivation.
+The Automated Cannabis Cultivation System is a sophisticated solution designed to optimize the growth environment for cannabis plants using Arduino and Raspberry Pi technology. The system precisely controls critical factors such as temperature, CO2 levels, light schedules, and nutrient delivery. It incorporates a Real-Time Clock (RTC) for accurate timing, enabling automated management of light cycles and environmental conditions. Data logging features, using InfluxDB, provide insights into system performance and plant growth, while Grafana is used to visualize and monitor these stats. Additionally, an optional web interface allows for remote monitoring and control. The system can also be expanded to include hydroponic nutrient management for advanced cultivation.
 
 ### Personal Motivation
 
@@ -13,7 +13,8 @@ The inspiration for this project originated from an initial experiment with a sm
 - **Light Scheduling:** Automates light cycles for various growth stages (Seedling, Vegetative, and Flowering) to provide appropriate light duration and intensity.
 - **Dimmed Sunrise and Sunset Simulation:** Gradually increases light intensity during sunrise and decreases it during sunset, mimicking natural light cycles to reduce plant stress and optimize growth.
 - **Real-Time Clock (RTC):** Ensures precise timing for light and environmental controls, maintaining consistent light schedules.
-- **Data Logging:** Tracks and records sensor data at regular intervals for performance analysis, helping to understand growth patterns and make informed adjustments.
+- **Data Logging with InfluxDB:** Tracks and records sensor data at regular intervals in an InfluxDB database for performance analysis, helping to understand growth patterns and make informed adjustments.
+- **Visualization with Grafana:** Uses Grafana to display real-time sensor data and historical trends, providing intuitive insights into the system's performance.
 - **Nutrient Mixing and Delivery (Optional):** Automates preparation and delivery of nutrients in a hydroponic setup, including management of nutrient reservoirs and pH/EC levels.
 - **Web Interface (Optional):** Enables remote monitoring and control via a Wi-Fi module, allowing users to adjust settings, view real-time data, and receive alerts from anywhere.
 
@@ -30,11 +31,12 @@ The inspiration for this project originated from an initial experiment with a sm
 
 - **Web Interface (Optional):** Provides a remote control panel for monitoring and adjusting system settings, viewing real-time sensor data, and manually overriding automated controls.
 - **LCD Display:** Shows critical data such as temperature, humidity, and light status for local monitoring.
+- **Visualization with Grafana:** Allows users to monitor system performance visually, using real-time data from InfluxDB to generate dashboards that display key metrics and trends.
 
 #### Data Logging and Analysis
 
-- **Data Recording:** Logs sensor readings at regular intervals to track system performance and plant growth, aiding in understanding growth patterns and optimizing the system.
-- **Performance Metrics:** Generates reports on system efficiency, plant growth progress, and environmental conditions based on collected data.
+- **Data Recording with InfluxDB:** Logs sensor readings at regular intervals into an InfluxDB database, providing a time-series record of system performance and plant growth.
+- **Performance Metrics Visualization with Grafana:** Generates and displays reports on system efficiency, plant growth progress, and environmental conditions using Grafana's powerful visualization tools.
 
 ### Lighting Logic
 
@@ -92,6 +94,8 @@ The inspiration for this project originated from an initial experiment with a sm
 
 ### Example Hardware
 
+- **Raspberry Pi 4:** Central control unit for data processing, web interface, data logging with InfluxDB, and visualization with Grafana.
+- **Arduino Uno or Mega:** Controls temperature, humidity, CO2 levels, irrigation, nutrient management, and basic light scheduling.
 - **4-Channel Relay Module:** Controls high-current devices like lights and cooling systems. (e.g., SainSmart 4-Channel Relay Module)
 - **Wi-Fi Module:** For wireless communication and remote control. (e.g., ESP8266 or ESP32)
 - **LCD Display:** For local display of sensor values and system status. (e.g., 16x2 LCD Display with I2C Adapter)
