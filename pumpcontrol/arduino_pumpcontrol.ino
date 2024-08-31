@@ -4,10 +4,10 @@
 #include <Encoder.h>
 
 // Pin Definitions
-const int relayPin = 8;      // Relay module pin connected to Arduino
-const int encoderPinA = 2;   // Rotary encoder pin A
-const int encoderPinB = 3;   // Rotary encoder pin B
-const int moistureSensorPin = A0; // Soil moisture sensor pin connected to Arduino
+const int relayPin = 8;            // Relay module pin connected to Arduino
+const int encoderPinA = 2;         // Rotary encoder pin A
+const int encoderPinB = 3;         // Rotary encoder pin B
+const int moistureSensorPin = A0;  // Soil moisture sensor pin connected to Arduino
 
 // LCD and RTC Initialization
 LiquidCrystal_I2C lcd(0x27, 16, 2); // Change address if necessary
@@ -17,11 +17,11 @@ RTC_DS3231 rtc;
 Encoder encoder(encoderPinA, encoderPinB);
 
 // Soil Moisture Thresholds
-int dryThreshold = 400;   // Threshold below which watering is activated
-int wetThreshold = 600;   // Threshold above which watering is avoided
+const int dryThreshold = 400;      // Threshold below which watering is activated
+const int wetThreshold = 600;      // Threshold above which watering is avoided
 
 // Irrigation Timing Parameters
-unsigned long irrigationIntervals[4] = {300000, 600000, 900000, 1200000}; // in milliseconds (5, 10, 15, 20 minutes)
+const unsigned long irrigationIntervals[4] = {300000, 600000, 900000, 1200000}; // in milliseconds (5, 10, 15, 20 minutes)
 int currentStage = 0; // Default to SEEDLING stage
 unsigned long lastIrrigationTime = 0;
 bool pumpState = false;
@@ -46,8 +46,8 @@ void setup() {
 
 void loop() {
   DateTime now = rtc.now();
-  int soilMoisture = analogRead(moistureSensorPin);
-  
+  int soilMoisture = analogRead(moistureSensorPin); // Read soil moisture
+
   // Update the LCD
   lcd.setCursor(0, 0);
   lcd.print("Stage: ");
