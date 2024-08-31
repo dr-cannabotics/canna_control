@@ -1,84 +1,82 @@
-
 ### Project Description: Automated Cannabis Grow Light Control System with LCD and Rotary Encoder
 
 ---
 
 **Objective:**
-Design and implement an automated system to control the lighting environment for cannabis plants. The system will manage light intensity and duration according to different growth stages, provide real-time information on an LCD display, and allow mode selection via a rotary encoder.
+Develop an automated lighting control system for cannabis cultivation that simulates natural sunrise and sunset effects. The system will manage light intensity and duration based on different growth stages, provide real-time updates on an LCD, and allow users to select and adjust modes using a rotary encoder.
 
 ---
 
 ### **Project Components**
 
 1. **Arduino Board:**
-   - **Purpose:** Central controller for managing the lighting system and interfacing with sensors and displays.
+   - **Purpose:** Central control unit for managing the lighting system and interfacing with other components.
    - **Recommended Model:** Arduino Uno or compatible.
 
 2. **Relay Module:**
-   - **Purpose:** Controls the on/off state of the grow light.
-   - **Specifications:** Relay capable of handling the current and voltage requirements of the grow light.
+   - **Purpose:** Controls the power state of the grow light.
+   - **Specifications:** Relay rated for the voltage and current of the grow light.
 
-3. **Dimmable Light:**
-   - **Purpose:** Provides the necessary light for cannabis growth stages.
-   - **Control Method:** Adjusted using Pulse Width Modulation (PWM) from the Arduino.
+3. **Dimmable Grow Light:**
+   - **Purpose:** Provides adjustable light intensity for different growth stages.
+   - **Control Method:** Controlled via Pulse Width Modulation (PWM) from the Arduino to simulate sunrise and sunset.
 
 4. **LCD Display (16x2 with I2C Interface):**
    - **Purpose:** Displays real-time information about the current light mode and intensity.
-   - **Features:** Easy-to-read screen with backlight for visibility in various lighting conditions.
+   - **Features:** Backlit screen for visibility in various lighting conditions.
 
 5. **Rotary Encoder:**
    - **Purpose:** Allows manual selection and adjustment of light modes.
    - **Functionality:** Enables users to cycle through different light modes (SEEDLING, VEG, BLOOM, RIPEN) by rotating the encoder.
 
 6. **Real-Time Clock (RTC) Module (DS3231):**
-   - **Purpose:** Provides accurate timekeeping for managing light schedules and durations.
-   - **Features:** High precision and reliability for tracking time and automating light changes.
+   - **Purpose:** Provides precise timekeeping for managing light schedules.
+   - **Features:** Accurate and reliable for automating light transitions based on time.
 
 7. **Connecting Wires and Breadboard:**
    - **Purpose:** Facilitate connections between components and the Arduino.
-   - **Specifications:** Wires for power, signal connections, and a breadboard for prototyping.
+   - **Specifications:** Standard wires and breadboard for prototyping.
 
 ---
 
 ### **System Overview**
 
-**1. Automatic Light Control:**
+**1. Light Control with Sunrise and Sunset Simulation:**
 
-   - **Light Modes:** The system will automatically cycle through different light modes suitable for various growth stages:
-     - **Seedling Mode:** Low light intensity for the initial growth phase.
-     - **Vegetative Mode:** Medium light intensity to support vegetative growth.
-     - **Bloom Mode:** Full light intensity to enhance flowering and bud development.
-     - **Ripen Mode:** Adjusted light settings to optimize the final maturation and resin production.
+   - **Light Modes:** The system automatically adjusts light intensity and duration for various growth stages:
+     - **Seedling Mode:** Low light intensity for initial growth.
+     - **Vegetative Mode:** Medium light intensity for vegetative growth.
+     - **Bloom Mode:** Full light intensity for flowering.
+     - **Ripen Mode:** Medium light intensity to enhance final maturation.
 
-   - **Duration Management:** Light duration for each mode is pre-defined, and the system automatically transitions between modes based on a daily schedule.
+   - **Sunrise and Sunset Effects:** Gradually ramps light intensity up and down to simulate natural sunrise and sunset, improving plant growth and mimicking natural conditions.
 
 **2. Manual Mode Selection:**
 
-   - **Rotary Encoder:** Users can manually select the desired light mode by rotating the encoder. This feature allows for flexible adjustments and overrides the automatic schedule if needed.
+   - **Rotary Encoder:** Provides manual control over light modes. Users can adjust settings by rotating the encoder, overriding the automatic schedule if needed.
 
 **3. Real-Time Display:**
 
-   - **LCD Display:** The LCD provides real-time feedback on the current light mode and intensity. This information helps users monitor and adjust the system as needed.
+   - **LCD Display:** Shows current light mode and intensity. Provides real-time feedback on system status and settings.
 
-**4. Real-Time Clock Integration:**
+**4. Accurate Timekeeping:**
 
-   - **RTC Module:** Keeps track of the current time to ensure that light mode transitions occur at the correct times, based on the pre-set light duration for each mode.
+   - **RTC Module:** Ensures that light transitions occur according to a precise schedule, based on the time of day.
 
 ---
 
 ### **Features**
 
-1. **Automated Lighting Schedule:**
-   - Automatically adjusts light intensity and duration according to the cannabis growth stage.
-   - Reduces manual intervention and ensures optimal light conditions throughout the growth cycle.
+1. **Automated Light Scheduling:**
+   - Adjusts light intensity and duration automatically based on the cannabis growth stage.
+   - Simulates natural sunrise and sunset to promote healthy plant growth.
 
-2. **User-Friendly Interface:**
-   - LCD display for easy monitoring of current light settings.
-   - Rotary encoder for intuitive mode selection and adjustments.
+2. **User Interface:**
+   - LCD screen for easy monitoring and adjustments.
+   - Rotary encoder for intuitive mode selection and setting changes.
 
 3. **Flexible Control:**
-   - Allows for both automatic and manual control of light modes, accommodating different growing needs and preferences.
+   - Supports both automatic scheduling and manual adjustments to accommodate different growing preferences and conditions.
 
-4. **Precision Timing:**
-   - Accurate timekeeping for consistent light schedules, supported by the RTC module.
-
+4. **Precise Timing:**
+   - Reliable timekeeping for consistent light schedules, facilitated by the RTC module.
