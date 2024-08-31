@@ -1,4 +1,4 @@
-´#include <Wire.h>
+#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <RTClib.h>
 #include <Encoder.h>
@@ -7,13 +7,18 @@
 const int relayPin = 8;      // Relay module pin connected to Arduino
 const int encoderPinA = 2;   // Rotary encoder pin A
 const int encoderPinB = 3;   // Rotary encoder pin B
+const int moistureSensorPin = A0; // Soil moisture sensor pin connected to Arduino
 
 // LCD and RTC Initialization
-LiquidCrystal_I2C lcd(0x27, 16, 2); // Change address and size if necessary
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Change address if necessary
 RTC_DS3231 rtc;
 
 // Rotary Encoder Initialization
 Encoder encoder(encoderPinA, encoderPinB);
+
+// Soil Moisture Thresholds
+int dryThreshold = 400;   // Threshold below which watering is activated
+int wetThreshold = 600;   // Threshold above which watering is avoided
 
 // Irrigation Timing Parameters
 unsigned long irrigationIntervals[4] = {300000, 600000, 900000, 1200000}; // in milliseconds (5, 10, 15, 20 minutes)
@@ -41,6 +46,7 @@ void setup() {
 
 void loop() {
   DateTime now = rtc.now();
+  int soilMoisture = analogRead(moistureSensorPin);
   
   // Update the LCD
   lcd.setCursor(0, 0);
@@ -48,20 +54,25 @@ void loop() {
   lcd.print(getStageName(currentStage));
   
   lcd.setCursor(0, 1);
-  lcd.print("Next Irrig: ");
-  lcd.print(irrigationIntervals[currentStage] / 60000); // Display in minutes
-  lcd.print(" min");
+  lcd.print("Moisture: ");
+  lcd.print(soilMoisture);
   
-  // Check if it's time to irrigate
-  if (millis() - lastIrrigationTime >= irrigationIntervals[currentStage]) {
-    lastIrrigationTime = millis();
-    pumpState = !pumpState;
-    digitalWrite(relayPin, pumpState ? HIGH : LOW);
-    
-    lcd.setCursor(0, 1);
-    lcd.print("Irrigating...");
-    delay(1000); // Display irrigation status for 1 second
-    lcd.clear();
+  // Determine if irrigation is needed
+  if (soilMoisture < dryThreshold) {
+    if (millis() - lastIrrigationTime >= irrigationIntervals[currentStage]) {
+      lastIrrigationTime = millis();
+      pumpState = !pumpState;
+      digitalWrite(relayPin, pumpState ? HIGH : LOW);
+      
+      lcd.setCursor(0, 1);
+      lcd.print("Irrigating...");
+      delay(1000); // Display irrigation status for 1 second
+      lcd.clear();
+    }
+  } else if (soilMoisture > wetThreshold) {
+    // Turn off pump if soil is too wet
+    pumpState = false;
+    digitalWrite(relayPin, LOW);
   }
 
   // Rotary Encoder Handling
@@ -70,7 +81,7 @@ void loop() {
     currentStage = encoderPos;
   }
 
-  // Adjust Irrigation Interval based on Encoder Position
+  // Adjust Moisture Thresholds based on Encoder Position (if desired)
   // Manual mode can be enhanced as needed
 }
 
