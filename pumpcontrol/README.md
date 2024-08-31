@@ -1,7 +1,6 @@
 ### Advanced Automated Cannabis Irrigation System with Soil Moisture Control
 
-**Objective:**
-Develop an advanced automated irrigation system for cannabis cultivation that manages watering schedules based on plant growth stages and integrates soil moisture sensing to optimize hydration. The system will ensure plants receive the right amount of water by adjusting irrigation based on real-time soil moisture levels.
+Advanced automated irrigation system for cannabis cultivation that manages watering schedules based on plant growth stages and integrates soil moisture sensing to optimize hydration. The system will ensure plants receive the right amount of water by adjusting irrigation based on real-time soil moisture levels.
 
 ### System Overview
 
