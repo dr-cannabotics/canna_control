@@ -8,8 +8,50 @@ The inspiration for this project originated from an initial experiment with a sm
 
 ### Features
 
-- **Temperature Control:** Maintains optimal temperature ranges by regulating cooling systems, ensuring a healthy growing environment for the plants. 
-- Keep the temperature during the vegetative phase between 68-77°F (20-25°C) and during the flowering phase between 64-75°F (18-24°C). The humidity should be around 40-60% during the vegetative phase and 30-50% during the flowering phase.
+Here's the updated overview with CO2 management levels and light information included:
+
+### Features
+
+- **Temperature Control:** 
+  - **Description:** Regulates cooling systems to maintain optimal temperature ranges, ensuring a healthy growing environment for the plants.
+  - **Temperature Ranges:**
+    - **Vegetative Phase:** 68-77°F (20-25°C)
+    - **Flowering Phase:** 64-75°F (18-24°C)
+  - **Humidity Levels:**
+    - **Vegetative Phase:** 40-60%
+    - **Flowering Phase:** 30-50%
+
+- **CO2 Management (Optional):**
+  - **Description:** Regulates CO2 levels using a sensor and control system to enhance photosynthesis and plant growth.
+  - **Recommended CO2 Levels:**
+    - **General Range:** 1000-1500 ppm (parts per million) for optimal growth.
+    - **High Levels:** Up to 2000 ppm can be used during the flowering phase for increased yield, but ensure good ventilation to avoid plant stress.
+
+- **Light Scheduling:**
+  - **Description:** Automates light cycles for various growth stages (Seedling, Vegetative, and Flowering) to provide appropriate light duration and intensity.
+  - **Light Information:**
+    - **Seedling Stage:** 18-24 hours of light per day.
+    - **Vegetative Phase:** 18 hours of light and 6 hours of darkness per day.
+    - **Flowering Phase:** 12 hours of light and 12 hours of darkness per day.
+  - **Light Intensity:** Adjust based on plant type and growth stage; generally, higher intensity is used during the vegetative phase and reduced during flowering.
+
+- **Dimmed Sunrise and Sunset Simulation:** 
+  - **Description:** Gradually increases light intensity during sunrise and decreases it during sunset, mimicking natural light cycles to reduce plant stress and optimize growth.
+
+- **Real-Time Clock (RTC):** 
+  - **Description:** Ensures precise timing for light and environmental controls, maintaining consistent light schedules.
+
+- **Data Logging with InfluxDB:** 
+  - **Description:** Tracks and records sensor data at regular intervals in an InfluxDB database for performance analysis, helping to understand growth patterns and make informed adjustments.
+
+- **Visualization with Grafana:** 
+  - **Description:** Uses Grafana to display real-time sensor data and historical trends, providing intuitive insights into the system's performance.
+
+- **Nutrient Mixing and Delivery (Optional):** 
+  - **Description:** Automates the preparation and delivery of nutrients in a hydroponic setup, including management of nutrient reservoirs and pH/EC levels.
+
+- **Web Interface (Optional):** 
+  - **Description:** Enables remote monitoring and control via a Wi-Fi module, allowing users to adjust settings, view real-time data, and receive alerts from anywhere.
 
 - **CO2 Management (Optional):** Regulates CO2 levels using a sensor and control system, enhancing photosynthesis and plant growth.
 - **Light Scheduling:** Automates light cycles for various growth stages (Seedling, Vegetative, and Flowering) to provide appropriate light duration and intensity.
