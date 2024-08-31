@@ -8,8 +8,7 @@ The inspiration for this project originated from an initial experiment with a sm
 
 ### Features
 
-- **Temperature Control:** Maintains optimal temperature ranges by regulating cooling systems, ensuring a healthy growing environment for the plants.
-- Keep the temperature during the vegetative phase between 68-77°F (20-25°C) and during the flowering phase between 64-75°F (18-24°C). The humidity should be around 40-60% during the vegetative phase and 30-50% during the flowering phase.
+- **Temperature Control:** Maintains optimal temperature ranges by regulating cooling systems, ensuring a healthy growing environment for the plants. - Keep the temperature during the vegetative phase between 68-77°F (20-25°C) and during the flowering phase between 64-75°F (18-24°C). The humidity should be around 40-60% during the vegetative phase and 30-50% during the flowering phase.
 - **CO2 Management (Optional):** Regulates CO2 levels using a sensor and control system, enhancing photosynthesis and plant growth.
 - **Light Scheduling:** Automates light cycles for various growth stages (Seedling, Vegetative, and Flowering) to provide appropriate light duration and intensity.
 - **Dimmed Sunrise and Sunset Simulation:** Gradually increases light intensity during sunrise and decreases it during sunset, mimicking natural light cycles to reduce plant stress and optimize growth.
