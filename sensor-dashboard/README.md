@@ -1,44 +1,53 @@
-Shipping Container Zero - Dashboard
-Overview
+Shipping Container Zero - Dashboard Overview
 
-The Shipping Container Zero - Dashboard is a comprehensive web-based application designed to monitor and control the environmental and operational parameters within a shipping container. This system integrates multiple technologies, including a Flask backend, a Raspberry Pi Pico W for sensor data collection, and Docker-based services managed via Portainer. The setup uses InfluxDB for time-series data storage and Grafana for advanced data visualization, providing a robust solution for real-time monitoring and control.
-Features
+Shipping Container Zero - Dashboard is an advanced web application designed for comprehensive monitoring and control within a shipping container environment. This system leverages a blend of modern technologies to provide real-time insights and management capabilities.
+Key Features
 
-    Real-Time Monitoring and Control:
-        Relay Management: Provides the ability to control relays connected to devices like lights and pumps directly from the dashboard. The current status (ON/OFF) of each relay is displayed and can be toggled with a button click.
-        Sensor Data Display: Displays real-time readings from various sensors such as temperature, humidity, pressure, soil moisture, pH value, light intensity, CO2 levels, and more. Data is presented in a user-friendly format for quick assessment.
+Real-Time Monitoring and Control:
 
-    Advanced Data Visualization:
-        Interactive Charts: Utilizes Chart.js to create dynamic, interactive line charts for visualizing temperature and humidity trends over time. This feature supports historical data analysis and helps track changes in environmental conditions.
+    Relay Management: Effortlessly control relays connected to devices such as lights and pumps directly from the dashboard. The status (ON/OFF) of each relay is clearly displayed and can be toggled with a single click.
+    Sensor Data Display: Access real-time readings from a range of sensors, including temperature, humidity, pressure, soil moisture, pH levels, light intensity, and CO2 concentrations. Data is presented in a clear, user-friendly format for quick evaluation.
 
-    Responsive and Modern Interface:
-        User Experience: Features a clean, intuitive design that adapts to different screen sizes, ensuring usability across desktops, tablets, and smartphones.
+Advanced Data Visualization:
 
-    Docker-Based Infrastructure:
-        Portainer: Manages Docker containers for ease of deployment and administration.
-            InfluxDB: Runs in a Docker container, serving as the time-series database where sensor data is stored and retrieved.
-            Grafana: Also runs in a Docker container, used for creating and displaying custom dashboards with real-time data visualizations.
+    Interactive Charts: Leverages Chart.js to generate dynamic, interactive line charts for visualizing trends in temperature and humidity over time. Supports historical data analysis to track environmental changes.
 
-    Integration with Raspberry Pi Pico W:
-        Data Collection: The Raspberry Pi Pico W acts as the central node collecting data from various sensors and relays. It transmits this data to the Flask backend for processing and storage.
-        Relay Control: Sends commands to control the state of connected relays based on user input from the web interface.
+Responsive and Modern Interface:
 
-    Frontend Technologies:
-        HTML/CSS/JavaScript: The frontend is built using standard web technologies, providing a responsive and interactive user experience.
-        Chart.js: A JavaScript library used for rendering real-time charts and graphs.
+    User Experience: Features a sleek, intuitive design that adjusts seamlessly to various screen sizes, ensuring optimal usability across desktops, tablets, and smartphones.
+
+Docker-Based Infrastructure:
+
+    Portainer: Simplifies the management of Docker containers, streamlining deployment and administration.
+        InfluxDB: Deployed in a Docker container, this time-series database stores and retrieves sensor data efficiently.
+        Grafana: Runs in a Docker container, enabling the creation and display of custom dashboards with real-time data visualizations.
+
+Integration with Raspberry Pi Pico W:
+
+    Data Collection: The Raspberry Pi Pico W acts as the central hub for gathering data from sensors and relays, transmitting it to the Flask backend for processing and storage.
+    Relay Control: Receives and executes commands to manage relay states based on user input from the web interface.
+
+Frontend Technologies:
+
+    HTML/CSS/JavaScript: Constructs the user interface, including real-time data displays, interactive charts, and control buttons.
+    Chart.js: Utilized for rendering real-time charts and graphs, providing an interactive visualization experience.
 
 Technical Architecture
 
-    Backend:
-        Flask: A lightweight Python web framework that handles HTTP requests, manages API endpoints, and serves the web application.
+Backend:
 
-    Database and Visualization:
-        Docker Containers:
-            InfluxDB: A time-series database that stores historical and real-time data from sensors. It supports efficient querying and data retrieval.
-            Grafana: A powerful tool for visualizing time-series data. Custom dashboards are created to monitor various metrics and trends, providing insights through interactive charts and graphs.
+    Flask: A lightweight Python web framework that manages HTTP requests, API endpoints, and serves the web application.
 
-    Sensor Node:
-        Raspberry Pi Pico W: Connects to different sensors to gather environmental data and controls relays. It sends data to the Flask backend and receives control commands via HTTP requests.
+Database and Visualization:
 
-    Frontend:
-        HTML/CSS/JavaScript: Provides the user interface, including real-time data displays, interactive charts, and control buttons. AJAX is used for seamless updates without refreshing the page.
+    Docker Containers:
+        InfluxDB: A time-series database that efficiently stores and retrieves historical and real-time sensor data.
+        Grafana: Provides robust tools for visualizing time-series data, enabling the creation of interactive dashboards for monitoring metrics and trends.
+
+Sensor Node:
+
+    Raspberry Pi Pico W: Connects to various sensors to collect environmental data and control relays. Communicates with the Flask backend to transmit data and receive control commands.
+
+Frontend:
+
+    HTML/CSS/JavaScript: Develops the user interface for real-time data display, interactive charts, and control functions. AJAX is used to ensure smooth, real-time updates without page reloads.
