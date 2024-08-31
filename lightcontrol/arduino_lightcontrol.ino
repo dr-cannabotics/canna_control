@@ -2,189 +2,138 @@
 #include <LiquidCrystal_I2C.h>
 #include <RTClib.h>
 
-// Define pins
-const int relayPin = 7;         // Relay module pin for controlling light
-const int dimmableLightPin = 9; // PWM pin for dimmable light
+// Pin definitions
+const int lightPin = 9;            // PWM pin for dimmable grow light
+const int encoderPinA = 2;         // Rotary encoder pin A
+const int encoderPinB = 3;         // Rotary encoder pin B
+const int buttonPin = 4;           // Button pin for encoder
+const int relayPin = 8;            // Relay module pin (if used)
 
-// Rotary Encoder pins
-const int encoderPinA = 2;
-const int encoderPinB = 3;
+// LCD setup
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Change address if necessary
 
-// Light modes
-const int SEEDLING_MODE = 1;
-const int VEG_MODE = 2;
-const int BLOOM_MODE = 3;
-const int RIPEN_MODE = 4;
-
-int currentMode = SEEDLING_MODE;
-int lightStartTime = 0;
-int lightIntensity = 0; // Current light intensity
-
+// RTC setup
 RTC_DS3231 rtc;
-DateTime now;
 
-// Light mode settings
-const int SEEDLING_LIGHT_INTENSITY = 64;  // Lower brightness
-const int VEG_LIGHT_INTENSITY = 128;      // Medium brightness
-const int BLOOM_LIGHT_INTENSITY = 255;    // Full brightness
-const int RIPEN_LIGHT_INTENSITY = 128;    // Medium brightness
+// Rotary encoder variables
+int encoderPos = 0;
+int lastEncoderPos = 0;
+bool buttonPressed = false;
+int mode = 0; // Modes: 0 = SEEDLING, 1 = VEG, 2 = BLOOM, 3 = RIPEN
 
-const int SEEDLING_LIGHT_DURATION = 24 * 60; // 24 hours in minutes
-const int VEG_LIGHT_DURATION = 18 * 60;      // 18 hours in minutes
-const int BLOOM_LIGHT_DURATION = 12 * 60;    // 12 hours in minutes
-const int RIPEN_LIGHT_DURATION = 10 * 60;    // 10 hours in minutes
-
-const int TRANSITION_TIME = 30; // Transition time in seconds
-
-LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27 for 16 chars and 2-line display
+// Light intensity levels (0-255)
+int intensityLevels[4] = {50, 150, 255, 150}; // Low, Medium, High, Medium
 
 void setup() {
-  pinMode(relayPin, OUTPUT);
-  pinMode(dimmableLightPin, OUTPUT);
-  pinMode(encoderPinA, INPUT);
-  pinMode(encoderPinB, INPUT);
-  
-  digitalWrite(relayPin, LOW); // Start with the relay off
-
-  Serial.begin(9600);
-  
-  if (!rtc.begin()) {
-    Serial.println("Couldn't find RTC");
-    while (1);
-  }
-
+  // Initialize LCD
   lcd.begin();
   lcd.backlight();
-  lcd.setCursor(0, 0);
-  lcd.print("Mode: Seedling");
   
-  lightStartTime = getCurrentMinutesSinceMidnight();
-  lightIntensity = 0; // Start with light off
+  // Initialize RTC
+  if (!rtc.begin()) {
+    lcd.print("RTC failed");
+    while (1);
+  }
+  if (rtc.lostPower()) {
+    lcd.print("RTC lost power");
+    // Set the RTC to the current date & time
+    // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  }
+  
+  // Set up pins
+  pinMode(lightPin, OUTPUT);
+  pinMode(encoderPinA, INPUT);
+  pinMode(encoderPinB, INPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(relayPin, OUTPUT); // Optional, if using relay
+  
+  // Initialize serial communication for debugging
+  Serial.begin(9600);
+
+  // Display startup message
+  lcd.setCursor(0, 0);
+  lcd.print("Grow Light System");
+  delay(2000);
 }
 
 void loop() {
-  now = rtc.now();
-  int minutesSinceMidnight = getCurrentMinutesSinceMidnight();
-
-  // Handle rotary encoder input
-  static int lastEncoderA = LOW;
+  // Read encoder
   int encoderA = digitalRead(encoderPinA);
+  int encoderB = digitalRead(encoderPinB);
   
-  if (encoderA != lastEncoderA) {
-    if (digitalRead(encoderPinB) != encoderA) {
-      // Clockwise rotation
-      currentMode++;
-      if (currentMode > RIPEN_MODE) {
-        currentMode = SEEDLING_MODE;
-      }
+  if (encoderA != lastEncoderPos) {
+    if (encoderB != encoderA) {
+      encoderPos++;
     } else {
-      // Counter-clockwise rotation
-      currentMode--;
-      if (currentMode < SEEDLING_MODE) {
-        currentMode = RIPEN_MODE;
-      }
+      encoderPos--;
     }
-    lastEncoderA = encoderA;
-    updateLCD();
+    lastEncoderPos = encoderA;
   }
   
-  // Manage light transitions
-  int currentModeDuration = getLightDuration(currentMode);
-  if (minutesSinceMidnight - lightStartTime >= currentModeDuration) {
-    currentMode = (currentMode % RIPEN_MODE) + 1;
-    lightStartTime = minutesSinceMidnight;
-    lightIntensity = 0; // Start with light off for the new mode
+  // Button press handling
+  buttonPressed = !digitalRead(buttonPin);
+  if (buttonPressed) {
+    mode = (mode + 1) % 4; // Cycle through modes
+    delay(300); // Debounce delay
   }
-  
-  // Gradual dimming effect
-  adjustLightIntensity();
-  
-  delay(1000); // Update every second
-}
 
-void adjustLightIntensity() {
-  int targetIntensity = getLightIntensity(currentMode);
+  // Get current time
+  DateTime now = rtc.now();
+  int hour = now.hour();
+  int minute = now.minute();
   
-  // Calculate the number of steps for transition
-  int steps = TRANSITION_TIME * 10; // 10 steps per second
-  int stepDelay = TRANSITION_TIME * 1000 / steps;
-  
-  if (lightIntensity < targetIntensity) {
-    lightIntensity++;
-    if (lightIntensity > targetIntensity) {
-      lightIntensity = targetIntensity;
-    }
-  } else if (lightIntensity > targetIntensity) {
-    lightIntensity--;
-    if (lightIntensity < targetIntensity) {
-      lightIntensity = targetIntensity;
-    }
+  // Determine light intensity based on mode and time
+  int lightIntensity = 0;
+  int sunriseDuration = 30; // minutes to ramp up
+  int sunsetDuration = 30;  // minutes to ramp down
+
+  if (mode == 0) { // SEEDLING
+    lightIntensity = intensityLevels[0];
+  } else if (mode == 1) { // VEG
+    lightIntensity = intensityLevels[1];
+  } else if (mode == 2) { // BLOOM
+    lightIntensity = intensityLevels[2];
+  } else if (mode == 3) { // RIPEN
+    lightIntensity = intensityLevels[3];
   }
-  
-  analogWrite(dimmableLightPin, lightIntensity);
-  if (lightIntensity > 0) {
-    digitalWrite(relayPin, HIGH); // Turn on relay if light intensity is above 0
+
+  // Sunrise/Sunset Simulation
+  int startHour = 6; // Sunrise hour
+  int endHour = 18;  // Sunset hour
+
+  if (hour >= startHour && hour < endHour) {
+    int timeInDay = (hour - startHour) * 60 + minute;
+    if (timeInDay < sunriseDuration * 60) {
+      // Sunrise phase
+      lightIntensity = map(timeInDay, 0, sunriseDuration * 60, intensityLevels[0], intensityLevels[1]);
+    } else if (timeInDay > (endHour - startHour - sunsetDuration) * 60) {
+      // Sunset phase
+      lightIntensity = map(timeInDay, (endHour - startHour - sunsetDuration) * 60, (endHour - startHour) * 60, intensityLevels[1], intensityLevels[0]);
+    } else {
+      // Daytime
+      lightIntensity = intensityLevels[1];
+    }
   } else {
-    digitalWrite(relayPin, LOW); // Turn off relay if light intensity is 0
+    // Nighttime
+    lightIntensity = intensityLevels[0];
   }
-  
-  delay(stepDelay); // Delay to achieve gradual transition
-}
 
-void updateLCD() {
-  lcd.clear();
+  // Set light intensity
+  analogWrite(lightPin, lightIntensity);
+
+  // Display current mode and intensity on LCD
   lcd.setCursor(0, 0);
-  
-  switch (currentMode) {
-    case SEEDLING_MODE:
-      lcd.print("Mode: Seedling");
-      break;
-    case VEG_MODE:
-      lcd.print("Mode: Vegetative");
-      break;
-    case BLOOM_MODE:
-      lcd.print("Mode: Blooming");
-      break;
-    case RIPEN_MODE:
-      lcd.print("Mode: Ripening");
-      break;
+  lcd.print("Mode: ");
+  switch (mode) {
+    case 0: lcd.print("SEEDLING"); break;
+    case 1: lcd.print("VEG"); break;
+    case 2: lcd.print("BLOOM"); break;
+    case 3: lcd.print("RIPEN"); break;
   }
-  
+
   lcd.setCursor(0, 1);
   lcd.print("Intensity: ");
   lcd.print(lightIntensity);
-}
-
-int getCurrentMinutesSinceMidnight() {
-  return now.hour() * 60 + now.minute();
-}
-
-int getLightDuration(int mode) {
-  switch (mode) {
-    case SEEDLING_MODE:
-      return SEEDLING_LIGHT_DURATION;
-    case VEG_MODE:
-      return VEG_LIGHT_DURATION;
-    case BLOOM_MODE:
-      return BLOOM_LIGHT_DURATION;
-    case RIPEN_MODE:
-      return RIPEN_LIGHT_DURATION;
-    default:
-      return SEEDLING_LIGHT_DURATION;
-  }
-}
-
-int getLightIntensity(int mode) {
-  switch (mode) {
-    case SEEDLING_MODE:
-      return SEEDLING_LIGHT_INTENSITY;
-    case VEG_MODE:
-      return VEG_LIGHT_INTENSITY;
-    case BLOOM_MODE:
-      return BLOOM_LIGHT_INTENSITY;
-    case RIPEN_MODE:
-      return RIPEN_LIGHT_INTENSITY;
-    default:
-      return SEEDLING_LIGHT_INTENSITY;
-  }
+  
+  delay(1000); // Update display every second
 }
