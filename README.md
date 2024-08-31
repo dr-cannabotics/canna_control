@@ -1,4 +1,4 @@
-### Project Overview
+### Automated Cannabis Cultivation System
 
 The **Automated Cannabis Cultivation System** is an advanced solution aimed at optimizing the cannabis growing environment using Arduino and Raspberry Pi technologies. The system manages critical factors like temperature, CO2 levels, light schedules, and nutrient delivery with high precision. It features a Real-Time Clock (RTC) to automate light cycles and environmental controls, while data logging with InfluxDB and visualization with Grafana provide comprehensive insights into system performance and plant growth. An optional web interface allows for remote monitoring and control, and the system can be expanded to include hydroponic nutrient management for advanced cultivation.
 
