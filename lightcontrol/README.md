@@ -25,28 +25,16 @@ Develop a sophisticated automated lighting control system for cannabis cultivati
 4. **Accurate Timekeeping:**
    - **RTC Module (DS3231):** Ensures precise management of light schedules, maintaining consistent light transitions based on the time of day.
 
-**Components:**
+Here is the table in English:
 
-1. **Arduino Board** (e.g., Arduino Uno)
-   - **Purpose:** Central control unit for managing the lighting system and interfacing with other components.
-
-2. **Relay Module**
-   - **Purpose:** Controls the power state of the grow light. Must be rated for the voltage and current of the SAN dimmable grow light.
-
-3. **Dimmable Grow Light** (e.g., SAN Light Dimmable)
-   - **Purpose:** Provides adjustable light intensity. Controlled via PWM from the Arduino, enabling sunrise and sunset simulations:
-     - **PWM Control:** The Arduino uses PWM signals to adjust the light intensity of the SAN light dimmable. During sunrise simulation, PWM signals gradually increase the light intensity, and during sunset simulation, PWM signals gradually decrease it.
-
-4. **LCD Display (16x2 with I2C Interface)**
-   - **Purpose:** Provides real-time feedback on light mode and intensity. Features a backlit screen for enhanced visibility.
-
-5. **Rotary Encoder**
-   - **Purpose:** Allows manual selection and adjustment of light modes, enabling users to cycle through SEEDLING, VEG, BLOOM, and RIPEN stages.
-
-6. **Real-Time Clock (RTC) Module (DS3231)**
-   - **Purpose:** Ensures accurate timing for managing light schedules.
-
-7. **Connecting Wires and Breadboard**
-   - **Purpose:** Facilitates connections between components and the Arduino during prototyping.
+| **Component**                       | **Purpose**                                                                                           |
+|------------------------------------|------------------------------------------------------------------------------------------------------|
+| **Arduino Board (e.g., Arduino Uno)** | Central control unit for managing the lighting system and interfacing with other components.        |
+| **Relay Module**                    | Controls the power state of the grow light. Must be rated for the voltage and current of the dimmable grow light. |
+| **Dimmable Grow Light (e.g., SAN Light Dimmable)** | Provides adjustable light intensity. Controlled via PWM from the Arduino, enabling sunrise and sunset simulations. |
+| **LCD Display (16x2 with I2C Interface)** | Provides real-time feedback on light mode and intensity. Features a backlit screen for better visibility. |
+| **Rotary Encoder**                 | Allows manual selection and adjustment of light modes, enabling users to cycle through SEEDLING, VEG, BLOOM, and RIPEN stages. |
+| **Real-Time Clock (RTC) Module (DS3231)** | Ensures accurate timing for managing light schedules.                                                 |
+| **Connecting Wires and Breadboard** | Facilitates connections between components and the Arduino during prototyping.                      |
 
 This system offers a reliable, automated solution for cannabis cultivation by replicating natural light conditions, ensuring optimal growth through precise control and adjustments.
