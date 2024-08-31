@@ -1,7 +1,3 @@
-Here's an enhanced project description for the Automated Cannabis Irrigation Control System, providing more detail and structure:
-
----
-
 ### Project Description: Advanced Automated Cannabis Irrigation Control System
 
 **Objective:**
