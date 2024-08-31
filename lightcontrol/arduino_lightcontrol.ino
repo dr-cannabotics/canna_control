@@ -18,6 +18,7 @@ const int RIPEN_MODE = 4;
 
 int currentMode = SEEDLING_MODE;
 int lightStartTime = 0;
+int lightIntensity = 0; // Current light intensity
 
 RTC_DS3231 rtc;
 DateTime now;
@@ -32,6 +33,8 @@ const int SEEDLING_LIGHT_DURATION = 24 * 60; // 24 hours in minutes
 const int VEG_LIGHT_DURATION = 18 * 60;      // 18 hours in minutes
 const int BLOOM_LIGHT_DURATION = 12 * 60;    // 12 hours in minutes
 const int RIPEN_LIGHT_DURATION = 10 * 60;    // 10 hours in minutes
+
+const int TRANSITION_TIME = 30; // Transition time in seconds
 
 LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27 for 16 chars and 2-line display
 
@@ -56,6 +59,7 @@ void setup() {
   lcd.print("Mode: Seedling");
   
   lightStartTime = getCurrentMinutesSinceMidnight();
+  lightIntensity = 0; // Start with light off
 }
 
 void loop() {
@@ -84,53 +88,47 @@ void loop() {
     updateLCD();
   }
   
-  // Light mode management
-  if (minutesSinceMidnight - lightStartTime >= getLightDuration(currentMode)) {
-    switch (currentMode) {
-      case SEEDLING_MODE:
-        currentMode = VEG_MODE;
-        break;
-      case VEG_MODE:
-        currentMode = BLOOM_MODE;
-        break;
-      case BLOOM_MODE:
-        currentMode = RIPEN_MODE;
-        break;
-      case RIPEN_MODE:
-        currentMode = SEEDLING_MODE;
-        break;
-    }
-    setLightMode(currentMode);
+  // Manage light transitions
+  int currentModeDuration = getLightDuration(currentMode);
+  if (minutesSinceMidnight - lightStartTime >= currentModeDuration) {
+    currentMode = (currentMode % RIPEN_MODE) + 1;
     lightStartTime = minutesSinceMidnight;
+    lightIntensity = 0; // Start with light off for the new mode
   }
   
-  delay(1000);
+  // Gradual dimming effect
+  adjustLightIntensity();
+  
+  delay(1000); // Update every second
 }
 
-void setLightMode(int mode) {
-  int intensity;
-
-  switch (mode) {
-    case SEEDLING_MODE:
-      intensity = SEEDLING_LIGHT_INTENSITY;
-      break;
-    case VEG_MODE:
-      intensity = VEG_LIGHT_INTENSITY;
-      break;
-    case BLOOM_MODE:
-      intensity = BLOOM_LIGHT_INTENSITY;
-      break;
-    case RIPEN_MODE:
-      intensity = RIPEN_LIGHT_INTENSITY;
-      break;
-    default:
-      intensity = SEEDLING_LIGHT_INTENSITY;
-      break;
+void adjustLightIntensity() {
+  int targetIntensity = getLightIntensity(currentMode);
+  
+  // Calculate the number of steps for transition
+  int steps = TRANSITION_TIME * 10; // 10 steps per second
+  int stepDelay = TRANSITION_TIME * 1000 / steps;
+  
+  if (lightIntensity < targetIntensity) {
+    lightIntensity++;
+    if (lightIntensity > targetIntensity) {
+      lightIntensity = targetIntensity;
+    }
+  } else if (lightIntensity > targetIntensity) {
+    lightIntensity--;
+    if (lightIntensity < targetIntensity) {
+      lightIntensity = targetIntensity;
+    }
   }
-
-  analogWrite(dimmableLightPin, intensity);
-  digitalWrite(relayPin, HIGH);
-  updateLCD();
+  
+  analogWrite(dimmableLightPin, lightIntensity);
+  if (lightIntensity > 0) {
+    digitalWrite(relayPin, HIGH); // Turn on relay if light intensity is above 0
+  } else {
+    digitalWrite(relayPin, LOW); // Turn off relay if light intensity is 0
+  }
+  
+  delay(stepDelay); // Delay to achieve gradual transition
 }
 
 void updateLCD() {
@@ -154,7 +152,7 @@ void updateLCD() {
   
   lcd.setCursor(0, 1);
   lcd.print("Intensity: ");
-  lcd.print(getLightIntensity(currentMode));
+  lcd.print(lightIntensity);
 }
 
 int getCurrentMinutesSinceMidnight() {
