@@ -1,40 +1,40 @@
 ### Project Description: Automated Cannabis Grow Light Control System
 
-**Objective:**
-Develop a sophisticated automated lighting control system for cannabis cultivation that simulates natural sunlight cycles, adjusts light intensity and duration for various growth stages, and offers real-time updates and manual adjustments.
+**Objective:** Create an advanced automated lighting control system for cannabis cultivation. This system will simulate natural sunlight cycles, adjust light intensity and duration according to various growth stages, and provide real-time updates with manual adjustment options.
 
-**System Overview:**
+#### System Overview
 
-1. **Automated Light Scheduling:**
-   - **Modes:** The system automatically adjusts light intensity and duration for four growth stages—SEEDLING, VEG, BLOOM, and RIPEN. Each mode is tailored to optimize plant development:
-     - **SEEDLING:** Low light intensity to support early growth.
-     - **VEG:** Medium light intensity for vigorous vegetative growth.
-     - **BLOOM:** Full light intensity to enhance flowering and fruiting.
-     - **RIPEN:** Medium light intensity to improve final maturation.
+**1. Automated Light Scheduling:**
 
-   - **Sunrise/Sunset Simulation:**
-     - **Sunrise Simulation:** Gradually increases light intensity from low to high using PWM signals, replicating the natural gradual increase in sunlight during sunrise. This slow ramp-up helps in acclimating plants to increasing light levels, promoting healthy growth.
-     - **Sunset Simulation:** Gradually decreases light intensity from high to low using PWM signals, mimicking the natural gradual decrease in sunlight during sunset. This slow ramp-down aids in reducing plant stress and prepares plants for nighttime rest.
+- **Modes:** The system adjusts light intensity and duration across four growth stages—SEEDLING, VEG, BLOOM, and RIPEN—each designed to optimize plant development:
+  - **SEEDLING:** Low light intensity to support early growth.
+  - **VEG:** Medium light intensity for robust vegetative growth.
+  - **BLOOM:** Full light intensity to enhance flowering and fruiting.
+  - **RIPEN:** Medium light intensity to aid final maturation.
 
-2. **Manual Mode Selection:**
-   - **Rotary Encoder:** Provides users with the ability to manually select and adjust light modes, allowing for customization beyond automated schedules.
+- **Sunrise/Sunset Simulation:**
+  - **Sunrise Simulation:** Gradually increases light intensity using PWM (Pulse Width Modulation) to mimic the natural gradual increase of sunlight at dawn. This gradual ramp-up helps acclimate plants to increasing light levels, promoting healthy growth.
+  - **Sunset Simulation:** Gradually decreases light intensity using PWM to replicate the gradual reduction of sunlight at dusk. This ramp-down minimizes plant stress and prepares plants for nighttime rest.
 
-3. **Real-Time Display:**
-   - **LCD Screen (16x2 with I2C Interface):** Shows the current light mode, intensity, and system status. The backlit display ensures clear visibility in various lighting conditions.
+**2. Manual Mode Selection:**
+- **Rotary Encoder:** Allows users to manually select and adjust light modes, offering customization beyond the automated schedules.
 
-4. **Accurate Timekeeping:**
-   - **RTC Module (DS3231):** Ensures precise management of light schedules, maintaining consistent light transitions based on the time of day.
+**3. Real-Time Display:**
+- **LCD Screen (16x2 with I2C Interface):** Displays the current light mode, intensity, and system status. The backlit display ensures clear visibility in different lighting conditions.
 
-Here is the table in English:
+**4. Accurate Timekeeping:**
+- **RTC Module (DS3231):** Manages precise timing for light schedules, ensuring consistent transitions based on the time of day.
 
-| **Component**                       | **Purpose**                                                                                           |
-|------------------------------------|------------------------------------------------------------------------------------------------------|
-| **Arduino Board (e.g., Arduino Uno)** | Central control unit for managing the lighting system and interfacing with other components.        |
-| **Relay Module**                    | Controls the power state of the grow light. Must be rated for the voltage and current of the dimmable grow light. |
-| **Dimmable Grow Light (e.g., SAN Light Dimmable)** | Provides adjustable light intensity. Controlled via PWM from the Arduino, enabling sunrise and sunset simulations. |
-| **LCD Display (16x2 with I2C Interface)** | Provides real-time feedback on light mode and intensity. Features a backlit screen for better visibility. |
-| **Rotary Encoder**                 | Allows manual selection and adjustment of light modes, enabling users to cycle through SEEDLING, VEG, BLOOM, and RIPEN stages. |
-| **Real-Time Clock (RTC) Module (DS3231)** | Ensures accurate timing for managing light schedules.                                                 |
-| **Connecting Wires and Breadboard** | Facilitates connections between components and the Arduino during prototyping.                      |
+#### Component Table
 
-This system offers a reliable, automated solution for cannabis cultivation by replicating natural light conditions, ensuring optimal growth through precise control and adjustments.
+| **Component**                         | **Purpose**                                                                                       |
+|---------------------------------------|---------------------------------------------------------------------------------------------------|
+| **Arduino Board (e.g., Arduino Uno)** | Central control unit for managing the lighting system and interfacing with other components.     |
+| **Relay Module**                      | Controls the power state of the grow light, rated for the voltage and current of the dimmable grow light. |
+| **Dimmable Grow Light (e.g., SAN Light Dimmable)** | Provides adjustable light intensity, controlled via PWM from the Arduino to simulate sunrise and sunset. |
+| **LCD Display (16x2 with I2C Interface)** | Shows real-time feedback on light mode and intensity. Features a backlit screen for improved visibility. |
+| **Rotary Encoder**                   | Enables manual selection and adjustment of light modes, allowing users to cycle through SEEDLING, VEG, BLOOM, and RIPEN stages. |
+| **Real-Time Clock (RTC) Module (DS3231)** | Ensures accurate timing for managing light schedules.                                              |
+| **Connecting Wires and Breadboard**   | Facilitates connections between components and the Arduino during prototyping.                   |
+
+This automated system offers a reliable solution for cannabis cultivation by replicating natural light conditions, ensuring optimal growth through precise control and adjustments.
