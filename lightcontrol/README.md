@@ -1,6 +1,6 @@
 ### Automated Cannabis Grow Light Control System
 
-**Objective:** Create an advanced automated lighting control system for cannabis cultivation. This system will simulate natural sunlight cycles, adjust light intensity and duration according to various growth stages, and provide real-time updates with manual adjustment options.
+Advanced automated lighting control system for cannabis cultivation. This system will simulate natural sunlight cycles, adjust light intensity and duration according to various growth stages, and provide real-time updates with manual adjustment options.
 
 #### System Overview
 
