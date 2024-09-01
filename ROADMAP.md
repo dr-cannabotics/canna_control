@@ -6,9 +6,9 @@
 |                                    | Set up development environment and tools                                                          |              |
 |                                    | Assemble and test hardware components                                                             |              |
 | **Real-Time Monitoring and Control** |                                                                                                  |              |
-|                                    | Implement relay management and control                                                             | Working            |
-|                                    | Integrate sensor data collection (temperature, humidity, CO2, O2, soil moisture, pH, light)       | Working              |
-|                                    | Develop real-time data display and interactive charts                                             | Working              |
+|                                    | Implement relay management and control                                                             | Done            |
+|                                    | Integrate sensor data collection (temperature, humidity, CO2, O2, soil moisture, pH, light)       | Done              |
+|                                    | Develop real-time data display and interactive charts                                             | Done              |
 | **Advanced Environmental Control**  |                                                                                                  |              |
 |                                    | Implement temperature and humidity control algorithms                                              |              |
 |                                    | Set up CO2 and O2 management systems                                                              |              |
@@ -22,18 +22,18 @@
 |                                    | Configure mixing tanks, nutrient pumps, and stirring controllers                                   |              |
 |                                    | Develop control mechanism for nutrient preparation and distribution                               |              |
 | **Data Logging and Visualization** |                                                                                                  |              |
-|                                    | Set up InfluxDB for real-time data collection                                                      |              |
-|                                    | Develop Grafana dashboards for data visualization                                                  |              |
-|                                    | Implement optional web interface for remote monitoring and control                                 |              |
+|                                    | Set up InfluxDB for real-time data collection                                                      | Done              |
+|                                    | Develop Grafana dashboards for data visualization                                                  | Done              |
+|                                    | Implement optional web interface for remote monitoring and control                                 | Done              |
 | **User Interface**                 |                                                                                                  |              |
-|                                    | Design and develop web-based dashboard using HTML/CSS/JavaScript                                  |              |
-|                                    | Integrate real-time data displays and interactive charts using Chart.js                            |              |
+|                                    | Design and develop web-based dashboard using HTML/CSS/JavaScript                                  | Done              |
+|                                    | Integrate real-time data displays and interactive charts using Chart.js                            | Done              |
 |                                    | Implement local monitoring with LCD display                                                        |              |
 | **Technical Architecture**         |                                                                                                  |              |
-|                                    | Set up Flask backend for handling HTTP requests and API endpoints                                  |              |
-|                                    | Configure Docker containers for InfluxDB and Grafana                                               |              |
-|                                    | Develop data collection and relay control using Raspberry Pi Pico W                                |              |
-|                                    | Manage central processing and web interface with Raspberry Pi 4                                    |              |
+|                                    | Set up Flask backend for handling HTTP requests and API endpoints                                  | Done              |
+|                                    | Configure Docker containers for InfluxDB and Grafana                                               | Done              |
+|                                    | Develop data collection and relay control using Raspberry Pi Pico W                                | Done              |
+|                                    | Manage central processing and web interface with Raspberry Pi 4                                    | Done              |
 | **Automation and Control Hardware** |                                                                                                  |              |
 |                                    | Set up Arduino Uno/Mega for environmental and irrigation control                                   |              |
 |                                    | Integrate 4-channel relay module for high-current devices                                          |              |
