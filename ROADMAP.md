@@ -1,5 +1,3 @@
-Certainly! Here's the updated table with the status column only for "In Progress" and "Completed" tasks:
-
 | Category                           | Task                                                                                             | Status       |
 |------------------------------------|--------------------------------------------------------------------------------------------------|--------------|
 | **Initial Setup**                  |                                                                                                  |              |
@@ -8,9 +6,9 @@ Certainly! Here's the updated table with the status column only for "In Progress
 |                                    | Set up development environment and tools                                                          |              |
 |                                    | Assemble and test hardware components                                                             |              |
 | **Real-Time Monitoring and Control** |                                                                                                  |              |
-|                                    | Implement relay management and control                                                             |              |
-|                                    | Integrate sensor data collection (temperature, humidity, CO2, O2, soil moisture, pH, light)       |              |
-|                                    | Develop real-time data display and interactive charts                                             |              |
+|                                    | Implement relay management and control                                                             | Working            |
+|                                    | Integrate sensor data collection (temperature, humidity, CO2, O2, soil moisture, pH, light)       | Working              |
+|                                    | Develop real-time data display and interactive charts                                             | Working              |
 | **Advanced Environmental Control**  |                                                                                                  |              |
 |                                    | Implement temperature and humidity control algorithms                                              |              |
 |                                    | Set up CO2 and O2 management systems                                                              |              |
@@ -49,4 +47,3 @@ Certainly! Here's the updated table with the status column only for "In Progress
 |                                    | Configure nutrient management components (pumps, mixing tanks, pH/EC sensors)                     |              |
 |                                    | Ensure all additional components (LCD display, buttons/knobs) are integrated and functional        |              |
 
-You can update the "Status" column as you make progress on each task.
