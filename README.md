@@ -1,129 +1,195 @@
-**Automated Cannabis Cultivation System**
+### Integrated Cannabis Cultivation Management System
 
-The Automated Cannabis Cultivation System is a cutting-edge solution designed to create an optimized and controlled environment for cannabis cultivation using Arduino and Raspberry Pi technologies. This system integrates advanced automation to manage temperature, CO2 and O2 levels, light cycles, ventilation, irrigation, and nutrient delivery, aiming to enhance plant growth and streamline the cultivation process.
+**Objective:**
+To develop a sophisticated, automated system for optimizing cannabis cultivation through real-time monitoring, environmental control, data visualization, and automation. This system integrates the Canna Control Dashboard and the Automated Cannabis Cultivation System to enhance plant health, increase yield, and streamline cultivation processes.
 
-**Personal Motivation**
+---
 
-The genesis of this project lies in an initial experiment with a basic hydroponic kitchen garden, where inadequate equipment and rudimentary processes led to suboptimal yields. Recognizing the potential for enhanced cultivation efficiency, this system was developed to harness the power of Arduino and Raspberry Pi technologies. The goal was to create a sophisticated, automated environment that maximizes plant health and yield while simplifying the overall cultivation process.
+### Personal Motivation
 
-**Features**
+The project originated from an initial experiment with a basic hydroponic kitchen garden, which highlighted limitations due to inadequate equipment and rudimentary processes. The goal was to leverage Arduino and Raspberry Pi technologies to create an advanced, automated environment that maximizes plant health and simplifies the cultivation process.
 
-1. **Temperature and Humidity Control**
+---
 
-    - **Description:** Ensures an optimal growing environment by regulating temperature and humidity through automated cooling systems, fans, and humidifiers.
-    - **Temperature Ranges:**
-        - Vegetative Phase: 68-77°F (20-25°C)
-        - Flowering Phase: 64-75°F (18-24°C)
-    - **Humidity Levels:**
-        - Vegetative Phase: 40-60%
-        - Flowering Phase: 30-50%
-    - **Control Mechanism:** Utilizes feedback from temperature and humidity sensors to dynamically adjust cooling systems and fans, maintaining consistent and ideal conditions for plant growth.
+### Key Features
 
-2. **CO2 and O2 Management with Ventilation Control**
+#### 1. Real-Time Monitoring and Control
 
-    - **Description:** Manages CO2 and O2 levels while coordinating ventilation to optimize the growing environment.
-    - **Modes:**
-        - **Normal Mode:**
-            - CO2 Levels: Maintains between 1000-1500 ppm.
-            - O2 Levels: Monitored to ensure adequate availability for plant respiration.
-            - Ventilation Control: Adjusts intake and exhaust fans to regulate CO2, O2, temperature, and humidity levels.
-        - **CO2 Overdrive Mode:**
-            - CO2 Levels: Increases up to 2000 ppm during flowering to boost growth.
-            - Ventilation Control: Enhances airflow to handle elevated CO2 levels and prevent heat buildup.
-    - **Control Mechanism:** Uses CO2 generators or bottles and adjusts ventilation systems based on real-time sensor data to maintain optimal gas levels.
+- **Relay Management:**
+  - Manage and control relays for devices such as lights, pumps, and cooling systems directly from the dashboard.
+  - View and toggle the status (ON/OFF) of each relay with a button click.
 
-3. **Light Scheduling with SANlight Control**
+- **Sensor Data Display:**
+  - Real-time readings for temperature, humidity, CO2 levels, O2 levels, soil moisture, pH, and light intensity.
+  - User-friendly presentation with interactive charts and graphs.
 
-    - **Description:** Automates the light cycles and intensity using SANlight LEDs, integrating sunrise and sunset simulations for a natural lighting experience.
-    - **Growth Stages:**
-        - Seedling Stage: 18-24 hours of light per day.
-        - Vegetative Phase: 18 hours light, 6 hours darkness.
-        - Flowering Phase: 12 hours light, 12 hours darkness.
-    - **Light Intensity:** Adjusts light intensity based on the growth stage, with higher intensity during the vegetative phase and reduced intensity during flowering.
-    - **Sunrise and Sunset Simulation:** Gradually adjusts light intensity using SANlight’s 0-10V inputs to mimic natural light transitions.
-    - **Control Mechanism:** Employs an RTC module to ensure precise timing of light schedules and simulation of natural light patterns.
+#### 2. Advanced Environmental Control
 
-4. **Pump Control for Automated Irrigation with Soil Moisture Sensing**
+- **Temperature and Humidity Control:**
+  - Automated regulation of cooling systems, fans, and humidifiers.
+  - **Temperature Ranges:**
+    - Vegetative Phase: 68-77°F (20-25°C)
+    - Flowering Phase: 64-75°F (18-24°C)
+  - **Humidity Levels:**
+    - Vegetative Phase: 40-60%
+    - Flowering Phase: 30-50%
 
-    - **Description:** Manages irrigation based on soil moisture levels, optimizing hydration across different growth stages.
-    - **Growth Stages:**
-        - Seedling: Provides light watering.
-        - Vegetative Growth: Delivers moderate watering.
-        - Flowering: Increases watering frequency.
-        - Ripening: Reduces watering to clean water only (no fertilizer).
-    - **Soil Moisture Sensing:**
-        - Dry Threshold: Triggers irrigation when moisture drops below a specified level (e.g., 400).
-        - Wet Threshold: Prevents over-watering when moisture exceeds a specified level (e.g., 600).
-    - **Manual Mode:** Allows adjustments to irrigation modes and moisture thresholds via a rotary encoder.
-    - **Real-Time Display:** LCD screen displays current mode, soil moisture level, pump status, and irrigation schedule.
-    - **Pump Control:** Relays control the water pump, activating irrigation based on real-time soil moisture data and predefined thresholds.
+- **CO2 and O2 Management:**
+  - **Normal Mode:** Maintains CO2 levels between 1000-1500 ppm, adjusts ventilation accordingly.
+  - **CO2 Overdrive Mode:** Increases CO2 up to 2000 ppm during flowering to boost growth, with enhanced airflow to manage elevated CO2 levels.
 
-5. **Nutrient Mixing and Delivery**
+- **Light Scheduling with SANlight Control:**
+  - Automates light cycles and intensity using SANlight LEDs.
+  - **Growth Stages:**
+    - Seedling Stage: 18-24 hours of light per day.
+    - Vegetative Phase: 18 hours light, 6 hours darkness.
+    - Flowering Phase: 12 hours light, 12 hours darkness.
+  - Sunrise and sunset simulations using SANlight’s 0-10V inputs.
 
-    - **Description:** Automates the preparation and distribution of nutrients in hydroponic setups using a system of reservoirs and pumps.
-    - **Components:**
-        - Pre-Mixed Nutrient Solution Tank: Stores ready-to-use nutrient mixes.
-        - Mixing Tanks: Three separate tanks for custom nutrient solutions.
-        - Nutrient Pumps: Distribute nutrient solutions to the plants efficiently.
-        - Magnetic Stirring Controllers: Ensure nutrient solutions remain well-mixed and consistent.
-    - **Control Mechanism:** Automates nutrient mixing and delivery with precise timing and mixing algorithms, ensuring optimal nutrient supply to plants.
+#### 3. Integrated Irrigation and Pump Control
 
-6. **Real-Time Monitoring, Data Logging, and Visualization**
+- **Automated Irrigation:**
+  - Manages irrigation based on soil moisture levels to ensure appropriate hydration.
+  - **Growth Stages and Irrigation Needs:**
+    - Seedling: Light watering.
+    - Vegetative Growth: Moderate watering.
+    - Flowering: Increased watering frequency.
+    - Ripening: Reduced watering to clean water only.
+  - **Soil Moisture Sensing:**
+    - **Dry Threshold:** Activates irrigation when soil moisture drops below a specified level (e.g., 400).
+    - **Wet Threshold:** Prevents over-watering when moisture exceeds a specified level (e.g., 600).
+  - **Manual Adjustments:** Adjust irrigation modes and moisture thresholds via rotary encoder and LCD display.
 
-    - **Description:** Provides comprehensive monitoring and analysis through real-time data collection and visualization tools.
-    - **Real-Time Clock (RTC):** Synchronizes all automated processes, including light scheduling, CO2 management, and nutrient delivery, with precise timing.
-    - **Data Logging with InfluxDB:** Continuously records sensor data (temperature, humidity, CO2, O2 levels, light intensity) for historical analysis and performance evaluation.
-    - **Visualization with Grafana:** Offers intuitive dashboards for real-time and historical data visualization, enabling users to monitor system performance and make informed adjustments.
+- **Pump Control:**
+  - **Pump Operation:**
+    - Controls water and nutrient pumps for irrigation and nutrient delivery.
+    - Pumps are managed based on real-time soil moisture data and irrigation schedules.
+    - Relays and motor drivers activate or deactivate pumps as needed.
+  - **Real-Time Display:**
+    - LCD screen shows current mode, soil moisture levels, pump status, and irrigation schedule.
 
-7. **Web Interface (Optional)**
+#### 4. Nutrient Management
 
-    - **Description:** Facilitates remote monitoring and control through a Wi-Fi module, providing access to live data and system alerts from any location.
-    - **Features:** Graphical data displays and remote control capabilities for system components, including lights, pumps, and ventilation, ensuring flexible and comprehensive management of the cultivation environment.
+- **Automated Nutrient Mixing and Delivery:**
+  - Automates the preparation and distribution of nutrient solutions for hydroponic setups.
+  - **Components:**
+    - **Pre-Mixed Nutrient Solution Tank:** Stores ready-to-use nutrient mixes.
+    - **Mixing Tanks:** Three tanks for custom nutrient solutions.
+    - **Nutrient Pumps:** Distribute nutrient solutions to plants efficiently.
+    - **Magnetic Stirring Controllers:** Ensure nutrient solutions are well-mixed and consistent.
+  - **Control Mechanism:**
+    - Automates nutrient mixing and delivery with precise timing and mixing algorithms.
+    - Ensures optimal nutrient supply to plants.
 
-**Components**
+#### 5. Data Logging and Visualization
 
-- **Sensors and Actuators**
-    - Temperature Sensor: DS18B20
-    - Humidity Sensor: DHT22
-    - Light Sensor: BH1750
-    - Soil Moisture Sensor
-    - pH Sensor
-    - EC Sensor
-    - CO2 Sensor
-    - O2 Sensor
-    - RTC Module: DS3231 or DS1307
+- **Real-Time Data Collection:**
+  - Continuous recording of sensor data (temperature, humidity, CO2, O2, light intensity) using InfluxDB.
+  - Historical and real-time data analysis via Grafana dashboards.
 
-- **Actuators**
-    - Relay Modules: Control high-current devices.
-    - Cooling Device: Air conditioner or cooling box.
-    - Light Sources: SANlight dimmable LED grow lights.
-    - Irrigation Pump: For automated watering.
-    - CO2 System: Generator or bottle.
-    - Fans: Intake and exhaust for ventilation.
-    - Ventilation Control System: Manages fans and humidifiers.
+- **Web Interface (Optional):**
+  - Provides remote monitoring and control through a Wi-Fi module.
+  - Access live data, system alerts, and control functions from any location.
 
-- **Nutrient Management**
-    - Nutrient Pumps: Automated mixing and delivery.
-    - Nutrient Reservoirs:
-        - Pre-Mixed Solution Tank
-        - Three Separate Mixing Tanks
-        - Glass Pods with Magnetic Stirring Controllers
-    - pH and EC Sensors: Monitor and adjust nutrient levels.
+#### 6. User Interface
 
-- **Additional Components**
-    - LCD Display: For local monitoring of system status.
-    - Buttons/Knobs: For manual adjustments.
-    - Power Supply: Provides stable power to the system.
-    - Wiring and Enclosure: For assembly and protection of electronics.
+- **Dashboard:**
+  - Web-based interface built with HTML/CSS/JavaScript.
+  - Features real-time data displays, interactive charts with Chart.js, and control buttons.
 
-- **Example Hardware**
-    - Raspberry Pi 4: Central processing unit for data management, web interface, logging, and visualization.
-    - Arduino Uno/Mega: Controls environmental parameters, irrigation, and ventilation.
-    - 4-Channel Relay Module: Manages high-current devices.
-    - Wi-Fi Module: Enables wireless communication (ESP8266 or ESP32).
-    - LCD Display: For real-time local monitoring.
-    - Stepper Motor Driver: For precise control of motors (if needed).
-    - Power Supply: Ensures reliable power delivery.
-    - Enclosure: Protects electronic components.
-    - Nutrient Pumps and Reservoirs: For hydroponic nutrient management.
-    - Intake and Exhaust Fans: For efficient ventilation.
+- **Local Monitoring:**
+  - LCD display for real-time monitoring of system status, including soil moisture and pump status.
+
+---
+
+### Technical Architecture
+
+#### Backend
+
+- **Flask:**
+  - Lightweight Python web framework for handling HTTP requests, managing API endpoints, and serving the web application.
+
+- **Docker Containers:**
+  - **InfluxDB:** Time-series database for storing and retrieving sensor data.
+  - **Grafana:** Visualization tool for creating interactive dashboards.
+
+#### Sensor Node
+
+- **Raspberry Pi Pico W:**
+  - Collects data from sensors and relays, transmits data to Flask backend, and executes commands to adjust relay states.
+
+#### Frontend
+
+- **HTML/CSS/JavaScript:**
+  - Develops the user interface for displaying real-time data, interactive charts, and control functions.
+  - AJAX for seamless updates without page reloads.
+
+- **Chart.js:**
+  - JavaScript library for rendering real-time charts and graphs.
+
+#### Automation and Control Hardware
+
+- **Raspberry Pi 4:**
+  - Central processing unit for data management, web interface, logging, and visualization.
+
+- **Arduino Uno/Mega:**
+  - Controls environmental parameters, irrigation, and ventilation.
+
+- **4-Channel Relay Module:**
+  - Manages high-current devices.
+
+- **Wi-Fi Module:**
+  - Enables wireless communication (ESP8266 or ESP32).
+
+- **LCD Display:**
+  - For real-time local monitoring.
+
+- **Stepper Motor Driver:**
+  - For precise motor control (if needed).
+
+- **Power Supply and Enclosure:**
+  - Provides reliable power and protection for electronic components.
+
+- **Nutrient Pumps and Reservoirs:**
+  - For hydroponic nutrient management.
+
+- **Intake and Exhaust Fans:**
+  - For efficient ventilation.
+
+---
+
+### Components and Sensors
+
+1. **Sensors:**
+   - Temperature Sensor: DS18B20
+   - Humidity Sensor: DHT22
+   - Light Sensor: BH1750
+   - Soil Moisture Sensor
+   - pH Sensor
+   - EC Sensor
+   - CO2 Sensor
+   - O2 Sensor
+   - RTC Module: DS3231 or DS1307
+
+2. **Actuators:**
+   - Relay Modules: For controlling high-current devices.
+   - Cooling Device: Air conditioner or cooling box.
+   - Light Sources: SANlight dimmable LED grow lights.
+   - Irrigation Pump: For automated watering.
+   - CO2 System: Generator or bottle.
+   - Fans: Intake and exhaust for ventilation.
+   - Ventilation Control System: Manages fans and humidifiers.
+
+3. **Nutrient Management:**
+   - Nutrient Pumps: For mixing and delivery.
+   - Nutrient Reservoirs:
+     - Pre-Mixed Solution Tank
+     - Three Separate Mixing Tanks
+     - Glass Pods with Magnetic Stirring Controllers
+   - pH and EC Sensors: For monitoring and adjusting nutrient levels.
+
+4. **Additional Components:**
+   - LCD Display: For local monitoring.
+   - Buttons/Knobs: For manual adjustments.
+   - Power Supply: Ensures stable power.
+   - Wiring and Enclosure: For assembly and protection.
