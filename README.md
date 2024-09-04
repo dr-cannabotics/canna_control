@@ -1,4 +1,4 @@
-### **Integrated Cannabis Cultivation Management System**
+### **Integrated Cannabis Cultivation Management System (ICCMS)**
 
 #### **Project Overview**
 
