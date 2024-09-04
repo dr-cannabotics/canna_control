@@ -1,4 +1,4 @@
-AutoUpdater: Flash Firmware via GitHub and Internet
+AutoUpdater: Flash Firmware on Raspberry Pi Pico W via GitHub and Internet
 Project Description
 
 AutoUpdater is an automated firmware updater for the Raspberry Pi Pico W that leverages GitHub and internet connectivity to manage and apply firmware updates.
