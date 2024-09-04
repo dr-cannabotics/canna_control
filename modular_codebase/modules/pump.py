@@ -1,18 +1,16 @@
-import RPi.GPIO as GPIO
+from machine import Pin
 
 class PumpController:
     def __init__(self, pin):
-        self.pin = pin
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.pin, GPIO.OUT)
-        GPIO.output(self.pin, GPIO.LOW)
+        self.pin = Pin(pin, Pin.OUT)
+        self.deactivate()
 
     def activate(self):
-        GPIO.output(self.pin, GPIO.HIGH)
+        self.pin.high()
         print("Pump activated")
 
     def deactivate(self):
-        GPIO.output(self.pin, GPIO.LOW)
+        self.pin.low()
         print("Pump deactivated")
 
     def set_state(self, state):
@@ -22,3 +20,8 @@ class PumpController:
             self.deactivate()
         else:
             print("Invalid state. Use 'ON' or 'OFF'.")
+
+# Example usage:
+# pump = PumpController(15)
+# pump.activate()
+# pump.deactivate()
