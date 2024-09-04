@@ -5,32 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shipping Container Zero - Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Existing styles */
-        body{font-family:'Roboto',sans-serif;background:#f4f6f9;color:#333;margin:0;padding:0}
-        header{background:#007bff;color:#fff;padding:20px;box-shadow:0 4px 8px rgba(0,0,0,0.2);position:sticky;top:0;z-index:1000;text-align:center}
-        header h1{margin:0;font-size:2.5em;font-weight:700}
-        .datetime{font-size:1.2em;color:#e0e0e0;margin-top:10px}
-        .container{padding:20px;max-width:1200px;margin:0 auto}
-        .info-box{background:#fff;border-radius:12px;box-shadow:0 6px 12px rgba(0,0,0,0.1);padding:20px;margin:20px 0;position:relative;overflow:hidden}
-        .info-box h2{margin-top:0;font-size:2em;color:#007bff;border-bottom:3px solid #007bff;padding-bottom:10px;text-align:center}
-        .buttons{display:flex;gap:15px;margin-top:20px;justify-content:center}
-        .buttons button{border:none;border-radius:8px;font-size:16px;padding:10px 20px;cursor:pointer;transition:background-color 0.3s ease,transform 0.2s ease;color:#fff;font-weight:600}
-        .buttons button.off{background:#6c757d}
-        .buttons button.on{background:#28a745}
-        .buttons button:hover{opacity:0.9;transform:scale(1.05)}
-        .sensor-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:15px}
-        .sensor-card{background:#fff;border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,0.1);padding:15px;text-align:center;transition:box-shadow 0.3s ease,transform 0.2s ease;display:flex;flex-direction:column;align-items:center;gap:10px}
-        .sensor-card i{font-size:2em;color:#007bff}
-        .sensor-card h3{margin:0;font-size:1.2em;color:#007bff}
-        .sensor-card p{margin:0;color:#666}
-        .sensor-card:hover{box-shadow:0 6px 12px rgba(0,0,0,0.2);transform:scale(1.02)}
-        .relay-status{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:10px;border:1px solid #007bff;border-radius:8px;background-color:#f0f8ff}
-        .relay-status span{font-weight:700;color:#007bff}
-        .relay-status.on{background-color:#d4edda;color:#155724}
-        .relay-status.off{background-color:#f8d7da;color:#721c24}
-        footer{background:#007bff;color:#fff;padding:20px;text-align:center;position:fixed;bottom:0;width:100%;box-shadow:0 -4px 8px rgba(0,0,0,0.3)}
+        body {font-family: 'Roboto', sans-serif; background: #f4f6f9; color: #333; margin: 0; padding: 0;}
+        header {background: #007bff; color: #fff; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 1000; text-align: center;}
+        header h1 {margin: 0; font-size: 2.5em; font-weight: 700;}
+        .datetime {font-size: 1.2em; color: #e0e0e0; margin-top: 10px;}
+        .container {padding: 20px; max-width: 1200px; margin: 0 auto;}
+        .info-box {background: #fff; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); padding: 20px; margin: 20px 0; position: relative; overflow: hidden;}
+        .info-box h2 {margin-top: 0; font-size: 2em; color: #007bff; border-bottom: 3px solid #007bff; padding-bottom: 10px; text-align: center;}
+        .buttons {display: flex; gap: 15px; margin-top: 20px; justify-content: center;}
+        .buttons button {border: none; border-radius: 8px; font-size: 16px; padding: 10px 20px; cursor: pointer; transition: background-color 0.3s ease, transform 0.2s ease; color: #fff; font-weight: 600;}
+        .buttons button.off {background: #6c757d;}
+        .buttons button.on {background: #28a745;}
+        .buttons button:hover {opacity: 0.9; transform: scale(1.05);}
+        .sensor-cards {display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;}
+        .sensor-card {background: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 15px; text-align: center; transition: box-shadow 0.3s ease, transform 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 10px;}
+        .sensor-card i {font-size: 2em; color: #007bff;}
+        .sensor-card h3 {margin: 0; font-size: 1.2em; color: #007bff;}
+        .sensor-card p {margin: 0; color: #666;}
+        .sensor-card:hover {box-shadow: 0 6px 12px rgba(0,0,0,0.2); transform: scale(1.02);}
+        .relay-status {display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 10px; border: 1px solid #007bff; border-radius: 8px; background-color: #f0f8ff;}
+        .relay-status span {font-weight: 700; color: #007bff;}
+        .relay-status.on {background-color: #d4edda; color: #155724;}
+        .relay-status.off {background-color: #f8d7da; color: #721c24;}
+        footer {background: #007bff; color: #fff; padding: 20px; text-align: center; position: fixed; bottom: 0; width: 100%; box-shadow: 0 -4px 8px rgba(0,0,0,0.3);}
         /* New styles for charts */
         .charts-container {
             display: flex;
@@ -81,233 +81,26 @@
                 <div class="sensor-card"><i class="fas fa-sun"></i><div><h3>Daylight Hours</h3><p id="daylightHours">N/A</p></div></div>
                 <div class="sensor-card"><i class="fas fa-lungs"></i><div><h3>Oxygen Level</h3><p id="oxygenLevel">N/A</p></div></div>
                 <div class="sensor-card"><i class="fas fa-wind"></i><div><h3>Air Speed</h3><p id="airSpeed">N/A</p></div></div>
-                <div class="sensor-card"><i class="fas fa-chart-line"></i><div><h3>EC Value</h3><p id="ecValue">N/A</p></div></div>
-                <div class="sensor-card"><i class="fas fa-seedling"></i><div><h3>Growth Rate</h3><p id="growthRate">N/A</p></div></div>
-                <div class="sensor-card"><i class="fas fa-apple-alt"></i><div><h3>Air Quality</h3><p id="airQuality">N/A</p></div></div>
-                <div class="sensor-card"><i class="fas fa-temperature-low"></i><div><h3>Leaf Temperature</h3><p id="leafTemperature">N/A</p></div></div>
-                <div class="sensor-card"><i class="fas fa-tint"></i><div><h3>Water Consumption</h3><p id="waterConsumption">N/A</p></div></div>
+                <div class="sensor-card"><i class="fas fa-dna"></i><div><h3>DNA Quality</h3><p id="dnaQuality">N/A</p></div></div>
+                <div class="sensor-card"><i class="fas fa-chart-line"></i><div><h3>Growth Rate</h3><p id="growthRate">N/A</p></div></div>
+                <div class="sensor-card"><i class="fas fa-humidity"></i><div><h3>Air Humidity</h3><p id="airHumidity">N/A</p></div></div>
             </div>
         </div>
         <div class="info-box">
-            <h2>Sensor Graphs</h2>
+            <h2>Charts</h2>
             <div class="charts-container">
                 <div class="chart">
-                    <canvas id="temperatureChart" width="400" height="200"></canvas>
+                    <canvas id="temperatureChart"></canvas>
                 </div>
                 <div class="chart">
-                    <canvas id="humidityChart" width="400" height="200"></canvas>
+                    <canvas id="humidityChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
-    <footer>&copy; 2024 The Chinese Cargo Cartel</footer>
-
-    <script>
-        // Initialize Temperature Chart
-        const temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
-        const temperatureChart = new Chart(temperatureCtx, {
-            type: 'line',
-            data: {
-                labels: [], // X-axis labels
-                datasets: [{
-                    label: 'Temperature (°C)',
-                    data: [], // Y-axis data
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderWidth: 2,
-                    fill: true
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        max: 20, // Adjust to fit your data range
-                        title: {
-                            display: true,
-                            text: 'Time'
-                        }
-                    },
-                    y: {
-                        min: 20,
-                        max: 35, // Temperature range
-                        title: {
-                            display: true,
-                            text: 'Temperature (°C)'
-                        }
-                    }
-                }
-            }
-        });
-
-        // Initialize Humidity Chart
-        const humidityCtx = document.getElementById('humidityChart').getContext('2d');
-        const humidityChart = new Chart(humidityCtx, {
-            type: 'line',
-            data: {
-                labels: [], // X-axis labels
-                datasets: [{
-                    label: 'Humidity (%)',
-                    data: [], // Y-axis data
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                    borderWidth: 2,
-                    fill: true
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        max: 20, // Adjust to fit your data range
-                        title: {
-                            display: true,
-                            text: 'Time'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        max: 100, // Humidity range
-                        title: {
-                            display: true,
-                            text: 'Humidity (%)'
-                        }
-                    }
-                }
-            }
-        });
-
-        // Function to update status
-        function updateStatus() {
-            fetch('/status')
-                .then(response => response.json())
-                .then(data => {
-                    for (let i = 0; i < 4; i++) {
-                        const button = document.getElementById(`toggleRelay${i}Btn`);
-                        const statusDiv = document.getElementById(`relayStatus${i}`);
-                        const statusSpan = statusDiv.querySelector('span:last-child');
-                        if (data[`relay_${i}`] === 'ON') {
-                            statusSpan.textContent = 'ON';
-                            button.classList.remove('off');
-                            button.classList.add('on');
-                            statusDiv.classList.remove('off');
-                            statusDiv.classList.add('on');
-                        } else {
-                            statusSpan.textContent = 'OFF';
-                            button.classList.remove('on');
-                            button.classList.add('off');
-                            statusDiv.classList.remove('on');
-                            statusDiv.classList.add('off');
-                        }
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-        }
-
-        // Function to update sensor data
-        function updateSensorData() {
-            fetch('/sensor')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('temperature').textContent = data.temperature !== null ? data.temperature + ' °C' : 'N/A';
-                    document.getElementById('humidity').textContent = data.humidity !== null ? data.humidity + ' %' : 'N/A';
-                    document.getElementById('pressure').textContent = data.pressure !== null ? data.pressure + ' hPa' : 'N/A';
-                    document.getElementById('soilMoisture').textContent = data.soilMoisture !== null ? data.soilMoisture + ' %' : 'N/A';
-                    document.getElementById('phValue').textContent = data.phValue !== null ? data.phValue : 'N/A';
-                    document.getElementById('lightIntensity').textContent = data.lightIntensity !== null ? data.lightIntensity + ' lux' : 'N/A';
-                    document.getElementById('co2').textContent = data.co2 !== null ? data.co2 + ' ppm' : 'N/A';
-                    document.getElementById('waterLevel').textContent = data.waterLevel !== null ? data.waterLevel + ' cm' : 'N/A';
-                    document.getElementById('nutrientConcentration').textContent = data.nutrientConcentration !== null ? data.nutrientConcentration + ' ppm' : 'N/A';
-                    document.getElementById('leafMoisture').textContent = data.leafMoisture !== null ? data.leafMoisture + ' %' : 'N/A';
-                    document.getElementById('rootTemperature').textContent = data.rootTemperature !== null ? data.rootTemperature + ' °C' : 'N/A';
-                    document.getElementById('daylightHours').textContent = data.daylightHours !== null ? data.daylightHours + ' hrs' : 'N/A';
-                    document.getElementById('oxygenLevel').textContent = data.oxygenLevel !== null ? data.oxygenLevel + ' %' : 'N/A';
-                    document.getElementById('airSpeed').textContent = data.airSpeed !== null ? data.airSpeed + ' m/s' : 'N/A';
-                    document.getElementById('ecValue').textContent = data.ecValue !== null ? data.ecValue + ' mS/cm' : 'N/A';
-                    document.getElementById('growthRate').textContent = data.growthRate !== null ? data.growthRate + ' cm/day' : 'N/A';
-                    document.getElementById('airQuality').textContent = data.airQuality !== null ? data.airQuality : 'N/A';
-                    document.getElementById('leafTemperature').textContent = data.leafTemperature !== null ? data.leafTemperature + ' °C' : 'N/A';
-                    document.getElementById('waterConsumption').textContent = data.waterConsumption !== null ? data.waterConsumption + ' L/day' : 'N/A';
-
-                    // Update the temperature chart
-                    const now = new Date().toLocaleTimeString();
-                    temperatureChart.data.labels.push(now);
-                    temperatureChart.data.datasets[0].data.push(data.temperature !== null ? data.temperature : null);
-
-                    // Update the humidity chart
-                    humidityChart.data.labels.push(now);
-                    humidityChart.data.datasets[0].data.push(data.humidity !== null ? data.humidity : null);
-
-                    // Keep the charts within the last 20 data points
-                    if (temperatureChart.data.labels.length > 20) {
-                        temperatureChart.data.labels.shift();
-                        temperatureChart.data.datasets[0].data.shift();
-                    }
-
-                    if (humidityChart.data.labels.length > 20) {
-                        humidityChart.data.labels.shift();
-                        humidityChart.data.datasets[0].data.shift();
-                    }
-
-                    temperatureChart.update();
-                    humidityChart.update();
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-        }
-
-        // Function to update date and time
-        function updateDateTime() {
-            const now = new Date();
-            const date = now.toLocaleDateString();
-            const time = now.toLocaleTimeString();
-            document.getElementById('datetime').textContent = `${date} ${time}`;
-        }
-
-        // Function to toggle relay
-        function toggleRelay(relayId) {
-            fetch('/toggle/' + relayId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                updateStatus(); // Update status after toggling
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
-
-        // Event listeners for relay buttons
-        document.getElementById('toggleRelay0Btn').addEventListener('click', function() {
-            toggleRelay('relay_0');
-        });
-
-        document.getElementById('toggleRelay1Btn').addEventListener('click', function() {
-            toggleRelay('relay_1');
-        });
-
-        document.getElementById('toggleRelay2Btn').addEventListener('click', function() {
-            toggleRelay('relay_2');
-        });
-
-        document.getElementById('toggleRelay3Btn').addEventListener('click', function() {
-            toggleRelay('relay_3');
-        });
-
-        // Update status, sensor data, and date/time every 1 second
-        setInterval(() => {
-            updateStatus();
-            updateSensorData();
-            updateDateTime();
-        }, 1000);
-    </script>
+    <footer>
+        <p>&copy; 2024 Shipping Container Zero. All rights reserved.</p>
+    </footer>
+    <script src="scripts.js"></script>
 </body>
 </html>
