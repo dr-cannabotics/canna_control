@@ -1,248 +1,285 @@
-### Integrated Cannabis Cultivation Management System (ICCMS) - Project Description
+### Key Modules
 
-### **Project Overview**
+1. **Pump Controller (`pump.py`)**
 
-The ICCMS is designed to automate and manage various aspects of cannabis cultivation through modular components. Each module within the system serves a specific function, contributing to the overall efficiency and effectiveness of the cultivation environment.
+   **Description:**
+   The `PumpController` module is essential for managing water and nutrient pumps in the cultivation system. It ensures precise irrigation and nutrient delivery by activating or deactivating pumps based on soil moisture levels and predefined irrigation schedules.
 
----
+   **Functionality:**
+   - **Initialize Pump:** Configures the GPIO pin to control the pump.
+   - **Activate/Deactivate:** Turns the pump ON or OFF.
+   - **Set State:** Switches the pump state based on inputs from soil moisture sensors or manual adjustments.
 
-### **Key Modules**
+   **Usage Example:**
 
-#### **1. Pump Controller (`pump.py`)**
+   ```python
+   from pump import PumpController
 
-**Description:**  
-The `PumpController` module manages water and nutrient pumps, essential for precise irrigation and nutrient delivery. It controls pump activation based on soil moisture and irrigation schedules, ensuring optimal plant hydration and nutrient uptake.
+   # Initialize pump on GPIO pin 15
+   pump = PumpController(15)
 
-**Functionality:**
-- **Initialize Pump:** Configures the GPIO pin to control the pump.
-- **Activate/Deactivate:** Turns the pump ON/OFF.
-- **Set State:** Switches the pump state based on input.
+   # Activate the pump
+   pump.activate()
 
-**Usage Example:**
-```python
-from pump import PumpController
+   # Deactivate the pump
+   pump.deactivate()
+   ```
 
-# Initialize pump on GPIO pin 15
-pump = PumpController(15)
+2. **Light Controller (`light.py`)**
 
-# Activate the pump
-pump.activate()
+   **Description:**
+   The `LightController` module manages light scheduling and intensity using SANlight LEDs. It automates light cycles for different growth stages and simulates natural sunrise and sunset to optimize light exposure for plant health.
 
-# Deactivate the pump
-pump.deactivate()
-```
+   **Functionality:**
+   - **Set Light Schedule:** Configures light duration for different growth stages (Seedling, Vegetative, Flowering).
+   - **Sunrise Simulation:** Gradually increases light intensity to simulate sunrise.
+   - **Sunset Simulation:** Gradually decreases light intensity to simulate sunset.
+   - **Adjust Intensity:** Manages light intensity using SANlight’s 0-10V inputs.
 
----
+   **Usage Example:**
 
-#### **2. Light Controller (`light.py`)**
+   ```python
+   from light import LightController
 
-**Description:**  
-The `LightController` module regulates grow lights, including their ON/OFF state and intensity. It adjusts light cycles and brightness to simulate natural conditions and support plant growth stages from seedling to flowering.
+   # Initialize light controller with SANlight interface
+   light = LightController()
 
-**Functionality:**
-- **Turn On/Off:** Controls light activation.
-- **Set Intensity:** Adjusts light brightness.
+   # Set light schedule for vegetative phase
+   light.set_schedule(18, 6)
 
-**Usage Example:**
-```python
-from light import LightController
+   # Simulate sunrise
+   light.simulate_sunrise()
 
-# Initialize light on GPIO pin 17
-light = LightController(17)
+   # Simulate sunset
+   light.simulate_sunset()
+   ```
 
-# Turn on the light
-light.turn_on()
+3. **Temperature Controller (`temperature.py`)**
 
-# Turn off the light
-light.turn_off()
-```
+   **Description:**
+   The `TemperatureController` module monitors and controls temperature-related functions. It ensures that the temperature remains within optimal ranges for different growth phases by regulating cooling systems and heating elements.
 
----
+   **Functionality:**
+   - **Read Temperature:** Retrieves temperature data from the DS18B20 sensor.
+   - **Control Temperature:** Adjusts cooling systems or heating elements to maintain desired temperature ranges.
+   - **Display Data:** Provides real-time temperature readings to the web interface and LCD display.
 
-#### **3. Temperature and Humidity Controller (`env_control.py`)**
+   **Usage Example:**
 
-**Description:**  
-The `EnvController` module automates temperature and humidity management within the cultivation area. It regulates cooling systems, fans, and humidifiers to maintain ideal environmental conditions for plant health.
+   ```python
+   from temperature import TemperatureController
 
-**Functionality:**
-- **Set Temperature:** Adjusts cooling systems for temperature control.
-- **Set Humidity:** Manages humidifiers for optimal humidity levels.
+   # Initialize temperature controller
+   temperature = TemperatureController()
 
-**Usage Example:**
-```python
-from env_control import EnvController
+   # Set temperature for flowering phase
+   temperature.set_range(64, 75)
 
-# Initialize environment control on GPIO pins
-env = EnvController(temp_pin=18, humidity_pin=19)
+   # Get current temperature
+   current_temp = temperature.get_temperature()
+   ```
 
-# Set temperature to 72°F
-env.set_temperature(72)
+4. **Humidity Controller (`humidity.py`)**
 
-# Set humidity to 50%
-env.set_humidity(50)
-```
+   **Description:**
+   The `HumidityController` module manages and monitors humidity levels. It adjusts humidifiers or dehumidifiers to maintain optimal humidity ranges for different growth stages using data from a DHT22 sensor.
 
----
+   **Functionality:**
+   - **Read Humidity:** Collects humidity data from the DHT22 sensor.
+   - **Control Humidity:** Activates or deactivates humidifiers and dehumidifiers based on humidity readings.
+   - **Display Data:** Shows current humidity readings and control statuses on the web interface and LCD display.
 
-#### **4. CO2 and O2 Controller (`gas_control.py`)**
+   **Usage Example:**
 
-**Description:**  
-The `GasController` module regulates CO2 and O2 levels to boost plant growth. It manages CO2 enrichment and O2 ventilation based on the plant's growth phase and environmental requirements.
+   ```python
+   from humidity import HumidityController
 
-**Functionality:**
-- **Set CO2 Levels:** Controls CO2 concentration.
-- **Set O2 Levels:** Manages O2 levels for adequate ventilation.
+   # Initialize humidity controller
+   humidity = HumidityController()
 
-**Usage Example:**
-```python
-from gas_control import GasController
+   # Set humidity range for vegetative phase
+   humidity.set_range(40, 60)
 
-# Initialize gas control on GPIO pins
-gas = GasController(co2_pin=20, o2_pin=21)
+   # Get current humidity level
+   current_humidity = humidity.get_humidity()
+   ```
 
-# Set CO2 level to 1500 ppm
-gas.set_co2_level(1500)
+5. **CO2 Controller (`co2.py`)**
 
-# Set O2 level to normal
-gas.set_o2_level('normal')
-```
+   **Description:**
+   The `CO2Controller` module manages and monitors CO2 levels. It adjusts CO2 injection and ventilation systems to maintain optimal CO2 concentrations for normal and CO2 Overdrive modes, supporting enhanced plant growth.
 
----
+   **Functionality:**
+   - **Read CO2 Levels:** Monitors CO2 concentration with a CO2 sensor.
+   - **Control CO2 Levels:** Adjusts CO2 injection and ventilation systems to maintain the desired CO2 concentration.
+   - **Display Data:** Provides real-time CO2 levels and system status to the web interface and LCD display.
 
-#### **5. Sensor Data Logger (`sensor_logger.py`)**
+   **Usage Example:**
 
-**Description:**  
-The `SensorLogger` module collects and logs data from various sensors (temperature, humidity, soil moisture). It stores this data in a time-series database for real-time monitoring and historical analysis.
+   ```python
+   from co2 import CO2Controller
 
-**Functionality:**
-- **Log Data:** Continuously records sensor readings.
-- **Retrieve Data:** Provides access to historical sensor data.
+   # Initialize CO2 controller
+   co2 = CO2Controller()
 
-**Usage Example:**
-```python
-from sensor_logger import SensorLogger
+   # Set CO2 levels for normal mode
+   co2.set_range(1000, 1500)
 
-# Initialize sensor logger
-logger = SensorLogger()
+   # Get current CO2 level
+   current_co2 = co2.get_co2_level()
+   ```
 
-# Log current sensor data
-logger.log_data()
+6. **O2 Controller (`o2.py`)**
 
-# Retrieve historical data
-data = logger.retrieve_data()
-```
+   **Description:**
+   The `O2Controller` module monitors and manages O2 levels to ensure adequate oxygen availability for plant respiration. It adjusts ventilation systems based on real-time O2 data.
 
----
+   **Functionality:**
+   - **Read O2 Levels:** Measures O2 concentration with an O2 sensor.
+   - **Control O2 Levels:** Adjusts ventilation systems to maintain adequate O2 levels.
+   - **Display Data:** Shows current O2 levels and control information on the web interface and LCD display.
 
-#### **6. Web Dashboard Interface (`dashboard.py`)**
+   **Usage Example:**
 
-**Description:**  
-The `Dashboard` module provides a web-based interface for real-time system monitoring and control. It visualizes sensor data and allows remote interaction with the system, offering insights and management capabilities from any location.
+   ```python
+   from o2 import O2Controller
 
-**Functionality:**
-- **Display Data:** Shows real-time and historical data.
-- **Control Devices:** Toggles devices and adjusts settings through the web interface.
+   # Initialize O2 controller
+   o2 = O2Controller()
 
-**Usage Example:**
-```python
-from dashboard import Dashboard
+   # Get current O2 level
+   current_o2 = o2.get_o2_level()
 
-# Initialize dashboard
-dashboard = Dashboard()
+   # Adjust ventilation based on O2 levels
+   o2.adjust_ventilation()
+   ```
 
-# Access real-time data
-dashboard.show_real_time_data()
+7. **Soil Moisture Controller (`moisture.py`)**
 
-# Control a device via the dashboard
-dashboard.toggle_device('pump', 'ON')
-```
+   **Description:**
+   The `SoilMoistureController` module handles soil moisture levels and irrigation. It uses soil moisture sensors to automate irrigation based on predefined moisture thresholds, ensuring plants receive adequate water.
 
----
+   **Functionality:**
+   - **Read Soil Moisture:** Monitors soil moisture levels with a sensor.
+   - **Control Irrigation:** Activates or deactivates irrigation systems based on moisture readings.
+   - **Manual Adjustments:** Allows manual adjustments to irrigation settings via a rotary encoder and LCD display.
 
-### **Technical Architecture**
+   **Usage Example:**
 
-**Backend:**
-- **Flask:** Handles HTTP requests and serves the web application.
-- **Docker Containers:** Includes InfluxDB for time-series data storage and Grafana for data visualization.
+   ```python
+   from moisture import SoilMoistureController
 
-**Sensor Node:**
-- **Raspberry Pi Pico W:** Collects sensor data and transmits commands.
+   # Initialize soil moisture controller
+   moisture = SoilMoistureController()
 
-**Frontend:**
-- **HTML/CSS/JavaScript:** Develops the web-based interface with interactive charts (Chart.js).
+   # Set moisture thresholds
+   moisture.set_thresholds(dry=400, wet=600)
 
-**Automation and Control Hardware:**
-- **Raspberry Pi 4:** Central processing unit.
-- **Arduino Uno/Mega:** Controls environmental parameters.
-- **4-Channel Relay Module:** Manages high-current devices.
-- **Wi-Fi Module:** Enables wireless communication.
-- **LCD Display:** For local monitoring.
-- **Steppe Motor Driver:** For precise motor control.
-- **Power Supply and Enclosure:** Ensures stable power and protection.
+   # Activate irrigation if soil moisture is below the dry threshold
+   if moisture.get_soil_moisture() < moisture.dry_threshold:
+       moisture.activate_irrigation()
+   ```
 
-**Components and
+8. **pH Controller (`ph.py`)**
 
-**Components and Sensors:**
-- **Sensors:**
-  - **Temperature Sensor:** DS18B20
-  - **Humidity Sensor:** DHT22
-  - **Light Sensor:** BH1750
-  - **Soil Moisture Sensor**
-  - **pH Sensor**
-  - **EC Sensor**
-  - **CO2 Sensor**
-  - **O2 Sensor**
-  - **RTC Module:** DS3231 or DS1307
+   **Description:**
+   The `pHController` module manages pH levels in the growing medium. It monitors pH levels using a pH sensor and adjusts nutrient solutions to maintain the optimal pH range for plant health.
 
-- **Actuators:**
-  - **Relay Modules:** Controls high-current devices.
-  - **Cooling Device:** Air conditioner or cooling box.
-  - **Light Sources:** SANlight dimmable LED grow lights.
-  - **Irrigation Pump:** Automated watering.
-  - **CO2 System:** Generator or bottle.
-  - **Fans:** Intake and exhaust for ventilation.
-  - **Ventilation Control System:** Manages fans and humidifiers.
+   **Functionality:**
+   - **Read pH Levels:** Measures pH using a pH sensor.
+   - **Control pH:** Adjusts nutrient solutions to maintain the desired pH level.
+   - **Display Data:** Provides pH data to the web interface and LCD display.
 
-- **Nutrient Management:**
-  - **Nutrient Pumps:** For mixing and delivery.
-  - **Nutrient Reservoirs:**
-    - **Pre-Mixed Solution Tank**
-    - **Three Separate Mixing Tanks**
-    - **Glass Pods with Magnetic Stirring Controllers**
-  - **pH and EC Sensors:** For monitoring and adjusting nutrient levels.
+   **Usage Example:**
 
-- **Additional Components:**
-  - **LCD Display:** For local monitoring.
-  - **Buttons/Knobs:** For manual adjustments.
-  - **Power Supply:** Ensures stable power.
-  - **Wiring and Enclosure:** For assembly and protection.
+   ```python
+   from ph import pHController
 
----
+   # Initialize pH controller
+   ph = pHController()
 
-### **How to Use the Modules**
+   # Set desired pH range
+   ph.set_range(5.5, 6.5)
 
-1. **Pump Controller (`pump.py`):** 
-   - **Purpose:** Controls the activation of water and nutrient pumps.
-   - **How to Use:** Initialize the pump with a GPIO pin, and use `activate()` and `deactivate()` methods to manage the pump's state.
+   # Get current pH level
+   current_ph = ph.get_ph_level()
+   ```
 
-2. **Light Controller (`light.py`):**
-   - **Purpose:** Manages grow lights, including their ON/OFF state and intensity.
-   - **How to Use:** Initialize the light with a GPIO pin, then use `turn_on()` and `turn_off()` methods to control the light's operation.
+9. **EC Controller (`ec.py`)**
 
-3. **Temperature and Humidity Controller (`env_control.py`):**
-   - **Purpose:** Regulates temperature and humidity in the cultivation environment.
-   - **How to Use:** Initialize with GPIO pins for temperature and humidity control, then use `set_temperature()` and `set_humidity()` methods to adjust conditions.
+   **Description:**
+   The `ECController` module monitors electrical conductivity (EC) to manage nutrient concentration in the solution. It measures EC levels with an EC sensor and adjusts nutrient delivery accordingly.
 
-4. **CO2 and O2 Controller (`gas_control.py`):**
-   - **Purpose:** Controls CO2 enrichment and O2 ventilation.
-   - **How to Use:** Initialize with GPIO pins, and use `set_co2_level()` and `set_o2_level()` methods to manage gas levels.
+   **Functionality:**
+   - **Read EC Levels:** Monitors EC using an EC sensor.
+   - **Adjust Nutrient Delivery:** Modifies nutrient concentrations based on EC readings.
+   - **Display Data:** Updates EC levels and control statuses on the web interface and LCD display.
 
-5. **Sensor Data Logger (`sensor_logger.py`):**
-   - **Purpose:** Logs data from various sensors for real-time and historical analysis.
-   - **How to Use:** Initialize the logger, then call `log_data()` to record sensor readings and `retrieve_data()` to access historical data.
+   **Usage Example:**
 
-6. **Web Dashboard Interface (`dashboard.py`):**
-   - **Purpose:** Provides a web interface for real-time monitoring and control.
-   - **How to Use:** Initialize the dashboard, and use methods to display data and control devices remotely.
+   ```python
+   from ec import ECController
 
-Each module is designed to be easily integrated into the ICCMS, allowing for efficient management of the cultivation environment. The modular approach ensures that the system is adaptable and scalable, accommodating various cultivation needs and preferences.
+   # Initialize EC controller
+   ec = ECController()
+
+   # Set EC range for nutrient solution
+   ec.set_range(1.2, 2.0)
+
+   # Get current EC level
+   current_ec = ec.get_ec_level()
+   ```
+
+10. **LCD Display Controller (`lcd_display.py`)**
+
+    **Description:**
+    The `LCDDisplayController` module manages the LCD display for local monitoring. It shows real-time system data, such as soil moisture levels, pump status, and irrigation schedules. It also supports manual adjustments through buttons and knobs.
+
+    **Functionality:**
+    - **Display Data:** Shows real-time information on the LCD, including soil moisture, pump status, and system alerts.
+    - **Manual Adjustments:** Allows users to make manual changes to settings through interactive buttons and knobs.
+    - **System Feedback:** Provides feedback on system operation and alerts for maintenance or issues.
+
+    **Usage Example:**
+
+    ```python
+    from lcd_display import LCDDisplayController
+
+    # Initialize LCD display controller
+    lcd = LCDDisplayController()
+
+    # Display current soil moisture level
+    lcd.show_soil_moisture()
+
+    # Display pump status
+    lcd.show_pump_status()
+
+    # Manual adjustment for irrigation
+    lcd.adjust_irrigation()
+    ```
+
+11. **Auto-Updater (`auto_updater.py`)**
+
+    **Description:**
+    The `AutoUpdater` module handles background firmware updates for the Raspberry Pi Pico W. It ensures that the device runs the latest firmware, maintaining system stability and incorporating improvements without interrupting operations.
+
+    **Functionality:**
+    - **
+
+Check for Updates:** Periodically checks for available firmware updates from a remote server.
+    - **Download and Install:** Downloads and installs updates automatically, ensuring minimal downtime.
+    - **Notify User:** Alerts the user when updates are available and after successful installation.
+
+    **Usage Example:**
+
+    ```python
+    from auto_updater import AutoUpdater
+
+    # Initialize auto-updater
+    updater = AutoUpdater()
+
+    # Check for and apply updates
+    updater.check_for_updates()
+    ```
+
+This completes the descriptions and usage examples for all key modules, ensuring comprehensive functionality and practical usage scenarios.
