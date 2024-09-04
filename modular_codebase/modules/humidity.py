@@ -1,21 +1,16 @@
-import Adafruit_DHT
+import dht
+from machine import Pin
 
 class HumidityController:
-    def __init__(self, sensor_pin):
-        self.sensor_pin = sensor_pin
-        self.sensor = Adafruit_DHT.DHT22
+    def __init__(self, pin):
+        self.sensor = dht.DHT22(Pin(pin))
 
     def get_humidity(self):
-        humidity, temperature = Adafruit_DHT.read_retry(self.sensor, self.sensor_pin)
-        if humidity is not None:
-            print(f"Current humidity: {humidity:.2f}%")
-            return humidity
-        else:
-            print("Failed to retrieve humidity data")
-            return None
+        self.sensor.measure()
+        humidity = self.sensor.humidity()
+        print(f"Current humidity: {humidity}%")
+        return humidity
 
-    def set_range(self, min_humidity, max_humidity):
-        self.min_humidity = min_humidity
-        self.max_humidity = max_humidity
-        print(f"Humidity range set to {min_humidity}% - {max_humidity}%")
-        # Control humidity systems based on range here
+# Example usage:
+# humidity = HumidityController(18)  # Use GPIO pin 18
+# humidity.get_humidity()
