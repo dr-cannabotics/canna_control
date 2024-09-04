@@ -1,9 +1,11 @@
+from machine import Pin
 import random
 
 class SoilMoistureController:
-    def __init__(self):
-        self.dry_threshold = 400
-        self.wet_threshold = 600
+    def __init__(self, pump_pin, sensor_pin):
+        self.pump_pin = Pin(pump_pin, Pin.OUT)
+        self.sensor_pin = Pin(sensor_pin, Pin.IN)
+        self.deactivate_irrigation()  # Ensure the irrigation system is off initially
 
     def get_soil_moisture(self):
         # Simulate soil moisture reading
@@ -11,11 +13,15 @@ class SoilMoistureController:
         print(f"Current soil moisture: {moisture}")
         return moisture
 
-    def set_thresholds(self, dry, wet):
-        self.dry_threshold = dry
-        self.wet_threshold = wet
-        print(f"Soil moisture thresholds set to Dry: {dry}, Wet: {wet}")
-
     def activate_irrigation(self):
+        self.pump_pin.high()
         print("Activating irrigation system...")
-        # Activate irrigation system based on soil moisture here
+
+    def deactivate_irrigation(self):
+        self.pump_pin.low()
+        print("Deactivating irrigation system...")
+
+# Example usage:
+# moisture = SoilMoistureController(21, 22)  # Use GPIO pins 21 for pump and 22 for sensor
+# moisture.get_soil_moisture()
+# moisture.activate_irrigation()
