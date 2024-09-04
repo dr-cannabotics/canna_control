@@ -1,15 +1,25 @@
-import random
+from machine import Pin
 
-class O2Controller:
-    def __init__(self):
-        self.o2_level = 21  # Example initial O2 level
+class CO2Controller:
+    def __init__(self, pin):
+        self.pin = Pin(pin, Pin.OUT)
+        self.deactivate()  # Ensure the CO2 system is off initially
 
-    def get_o2_level(self):
-        # Simulate O2 level reading
-        self.o2_level = random.uniform(19.0, 21.0)
-        print(f"Current O2 level: {self.o2_level} %")
-        return self.o2_level
+    def activate(self):
+        self.pin.high()
+        print("CO2 system activated")
 
-    def adjust_ventilation(self):
-        print("Adjusting ventilation based on O2 levels...")
-        # Adjust ventilation systems here
+    def deactivate(self):
+        self.pin.low()
+        print("CO2 system deactivated")
+
+    def get_co2_level(self):
+        # Simulate CO2 level reading
+        co2_level = 1000  # Placeholder value
+        print(f"Current CO2 level: {co2_level} ppm")
+        return co2_level
+
+# Example usage:
+# co2 = CO2Controller(19)  # Use GPIO pin 19
+# co2.activate()
+# co2.deactivate()
