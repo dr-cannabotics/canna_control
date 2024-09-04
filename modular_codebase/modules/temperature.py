@@ -1,21 +1,16 @@
-import Adafruit_DHT
+import dht
+from machine import Pin
 
 class TemperatureController:
-    def __init__(self, sensor_pin):
-        self.sensor_pin = sensor_pin
-        self.sensor = Adafruit_DHT.DHT22
+    def __init__(self, pin):
+        self.sensor = dht.DHT22(Pin(pin))
 
     def get_temperature(self):
-        humidity, temperature = Adafruit_DHT.read_retry(self.sensor, self.sensor_pin)
-        if temperature is not None:
-            print(f"Current temperature: {temperature:.2f}°C")
-            return temperature
-        else:
-            print("Failed to retrieve temperature data")
-            return None
+        self.sensor.measure()
+        temperature = self.sensor.temperature()
+        print(f"Current temperature: {temperature}°C")
+        return temperature
 
-    def set_range(self, min_temp, max_temp):
-        self.min_temp = min_temp
-        self.max_temp = max_temp
-        print(f"Temperature range set to {min_temp}°C - {max_temp}°C")
-        # Control temperature systems based on range here
+# Example usage:
+# temp = TemperatureController(17)  # Use GPIO pin 17
+# temp.get_temperature()
