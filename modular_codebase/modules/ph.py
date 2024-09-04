@@ -1,8 +1,9 @@
 import random
 
 class pHController:
-    def __init__(self):
-        self.ph_range = (5.5, 6.5)  # Default pH range
+    def __init__(self, pin):
+        self.pin = pin
+        # Initialize pH sensor or related hardware here
 
     def get_ph_level(self):
         # Simulate pH level reading
@@ -10,7 +11,6 @@ class pHController:
         print(f"Current pH level: {ph_level:.2f}")
         return ph_level
 
-    def set_range(self, min_ph, max_ph):
-        self.ph_range = (min_ph, max_ph)
-        print(f"pH range set to {min_ph} - {max_ph}")
-        # Adjust pH levels based on range here
+# Example usage:
+# ph = pHController(23)  # Use GPIO pin 23
+# ph.get_ph_level()
