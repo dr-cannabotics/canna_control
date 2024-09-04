@@ -1,4 +1,4 @@
-### Project Description: Pico W Background Firmware Updater
+### AutoUpdater: Pico W Background Firmware Updater
 
 #### Overview
 The **Pico W Background Firmware Updater** is a robust system designed to keep Raspberry Pi Pico W devices up-to-date with the latest firmware releases. By integrating with GitHub, the system automatically checks for new firmware versions, downloads them, and installs the updates—all while running in the background. This ensures that the device can continue performing its primary functions without interruption, making it ideal for IoT deployments where manual updates are impractical.
