@@ -1,8 +1,9 @@
 import random
 
 class ECController:
-    def __init__(self):
-        self.ec_range = (1.2, 2.0)  # Default EC range
+    def __init__(self, pin):
+        self.pin = pin
+        # Initialize EC sensor or related hardware here
 
     def get_ec_level(self):
         # Simulate EC level reading
@@ -10,7 +11,6 @@ class ECController:
         print(f"Current EC level: {ec_level:.2f}")
         return ec_level
 
-    def set_range(self, min_ec, max_ec):
-        self.ec_range = (min_ec, max_ec)
-        print(f"EC range set to {min_ec} - {max_ec}")
-        # Adjust nutrient delivery based on EC range here
+# Example usage:
+# ec = ECController(24)  # Use GPIO pin 24
+# ec.get_ec_level()
