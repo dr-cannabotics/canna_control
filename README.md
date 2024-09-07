@@ -64,11 +64,7 @@ The project originated from basic hydroponic kitchen garden experiments, reveali
 
 ---
 
-### **4. Here is the complete description of the Automated Nutrient Management System (ANMS), including the full code reflecting the use of citric acid for pH-Down and baking soda for pH-Up, along with all its features.
-
----
-
-### **3. Automated Nutrient Management System (ANMS)**
+### **4. Automated Nutrient Management System (ANMS)**
 
 The **Automated Nutrient Management System (ANMS)** is designed to automate and optimize the nutrient management process in hydroponic systems. This system helps maintain optimal growing conditions by automatically regulating **pH** and **electrical conductivity (EC)** levels in the nutrient solution, ensuring the best environment for plant growth. It integrates features like real-time monitoring, automated adjustments, nutrient delivery, and efficient mixing for precise nutrient control.
 
