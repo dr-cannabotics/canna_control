@@ -269,7 +269,6 @@ if __name__ == "__main__":
 - The system tweaks nutrient levels in response to signs of deficiency or imbalance detected through sensors or computer vision.
 
 ---
-```
 ### **10. Auto-Updater for Raspberry Pi Pico W**
 
 The Auto-Updater ensures that the Raspberry Pi Pico W maintains the latest firmware automatically, minimizing manual updates and enhancing device performance.
