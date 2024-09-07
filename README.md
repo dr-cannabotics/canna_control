@@ -67,11 +67,118 @@ The project originated from basic hydroponic kitchen garden experiments, reveali
 ### **4. Nutrient Management**
 
 #### **Automated Nutrient Mixing and Delivery**
-- Automated nutrient mixing and delivery system based on plant needs:
-  - **Pre-Mixed Nutrient Tank** for storing nutrient solutions.
-  - **Mixing Tanks** for custom nutrient blends.
-  - **Magnetic Stirring Controllers** ensure nutrient consistency.
-  - **Nutrient Pumps** distribute nutrients efficiently.
+
+The Automated Nutrient Management System (ANMS) is designed to streamline and optimize nutrient management in hydroponic systems. It automates the adjustment of pH and electrical conductivity (EC) levels in the nutrient solution to ensure optimal conditions for plant growth. The system integrates real-time monitoring, automated adjustments, and efficient mixing to enhance nutrient delivery and plant health.
+
+### Technical Features
+
+- **Real-Time Monitoring:** Continuous tracking of pH and EC levels for accurate nutrient management.
+- **Automated pH Adjustment:** Use of pH-Up and pH-Down pumps for precise pH control.
+- **Nutrient Management:** Selection of nutrient tanks based on growth stage and automatic mixing.
+- **Efficient Mixing:** Use of a magnetic stirrer for thorough solution mixing.
+- **Adaptive Rechecking:** Reassessment of pH and EC levels post-adjustment to ensure optimal conditions.
+
+### Workflow
+
+1. **Monitoring:**
+   - Continuous measurement of pH and electrical conductivity (EC) levels using sensors.
+
+2. **Adjusting pH:**
+   - Use pH-Up or pH-Down pumps based on real-time pH readings.
+
+3. **Managing Nutrients:**
+   - Activate nutrient pumps based on the selected nutrient tank and growth stage.
+
+4. **Mixing Solution:**
+   - Use the stirrer to mix the nutrient solution thoroughly after adjustments.
+
+5. **Rechecking:**
+   - Reassess pH and EC levels after mixing and adjust as needed.
+
+### Complete Code
+
+```python
+import time
+from sensors import pH_sensor, EC_sensor
+from pumps import pH_Up_pump, pH_Down_pump, nutrient_pump1, nutrient_pump2, optional_pump
+from stirrer import stirrer
+
+# Function to read sensor data
+def read_sensor_data():
+    pH_value = pH_sensor.read()  # Read pH value from sensor
+    EC_value = EC_sensor.read()  # Read EC value from sensor
+    return pH_value, EC_value
+
+# Function to adjust pH level
+def adjust_pH(pH_value, target_pH):
+    if pH_value < target_pH - 0.1:
+        pH_Up_pump.activate()
+        time.sleep(60)  # Wait for 1 minute
+        pH_Up_pump.deactivate()
+    elif pH_value > target_pH + 0.1:
+        pH_Down_pump.activate()
+        time.sleep(60)  # Wait for 1 minute
+        pH_Down_pump.deactivate()
+
+# Function to manage nutrient addition
+def manage_nutrients(target_EC, use_optional_tank=False):
+    if use_optional_tank:
+        optional_pump.activate()
+        time.sleep(60)  # Wait for 1 minute
+        optional_pump.deactivate()
+    else:
+        if target_EC < 1.5:  # Example threshold for nutrient tank 1
+            nutrient_pump1.activate()
+        elif target_EC > 2.0:  # Example threshold for nutrient tank 2
+            nutrient_pump2.activate()
+        time.sleep(60)  # Wait for 1 minute
+        nutrient_pump1.deactivate()
+        nutrient_pump2.deactivate()
+
+# Function to mix nutrient solution
+def mix_solution():
+    stirrer.activate()
+    time.sleep(120)  # Mix for 2 minutes
+    stirrer.deactivate()
+
+# Main workflow
+def main():
+    target_pH = 6.0
+    target_EC = 1.8
+    use_optional_tank = False
+    
+    while True:
+        pH_value, EC_value = read_sensor_data()
+        
+        # Adjust pH
+        adjust_pH(pH_value, target_pH)
+        
+        # Manage Nutrients
+        manage_nutrients(target_EC, use_optional_tank)
+        
+        # Mix Solution
+        mix_solution()
+        
+        # Recheck pH and EC
+        pH_value, EC_value = read_sensor_data()
+        if not (target_pH - 0.1 < pH_value < target_pH + 0.1 and target_EC - 0.1 < EC_value < target_EC + 0.1):
+            continue
+        
+        time.sleep(3600)  # Wait for 1 hour before next adjustment
+
+if __name__ == "__main__":
+    main()
+```
+
+### Code Explanation
+
+- **`read_sensor_data()`**: Reads the current pH and EC values from sensors.
+- **`adjust_pH(pH_value, target_pH)`**: Adjusts the pH level using pH-Up or pH-Down pumps based on the target pH.
+- **`manage_nutrients(target_EC, use_optional_tank)`**: Activates the appropriate nutrient pump based on the target EC. Optionally, it can use an additional nutrient tank.
+- **`mix_solution()`**: Activates the stirrer to mix the nutrient solution for a specified time.
+- **`main()`**: Coordinates the entire process, including monitoring, adjusting pH, managing nutrients, mixing the solution, and rechecking values.
+
+This project description provides a clear overview of the ANMS, its technical features, workflow, and the complete code required to implement the system.
 
 ---
 
