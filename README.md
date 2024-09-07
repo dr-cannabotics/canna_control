@@ -252,18 +252,8 @@ This project description provides a clear overview of the ANMS, its technical fe
 
 ---
 
-### **10. Auto-Updater**
+### **10. Auto-Updater for Raspberry Pi Pico W**
 
-Here’s a more concise and structured project description for the Auto-Updater:
-
----
-Here’s a refined version of the project description:
-
----
-
-### **Auto-Updater for Raspberry Pi Pico W**
-
-#### **Overview**
 The Auto-Updater ensures that the Raspberry Pi Pico W maintains the latest firmware automatically, minimizing manual updates and enhancing device performance.
 
 #### **Key Features**
