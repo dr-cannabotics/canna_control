@@ -207,23 +207,8 @@ if __name__ == "__main__":
 5. **main()**:
    - This is the central function that runs the entire system. It continuously monitors pH and EC levels, adjusts them when necessary, and ensures optimal nutrient solution conditions for plants.
 
----
-
-This system ensures that plants in hydroponic systems have the ideal nutrient solution, continuously optimized for growth with minimal human intervention.
 
 ```
-
-### Code Explanation
-
-- **`read_sensor_data()`**: Reads the current pH and EC values from sensors.
-- **`adjust_pH(pH_value, target_pH)`**: Adjusts the pH level using pH-Up or pH-Down pumps based on the target pH.
-- **`manage_nutrients(target_EC, use_optional_tank)`**: Activates the appropriate nutrient pump based on the target EC. Optionally, it can use an additional nutrient tank.
-- **`mix_solution()`**: Activates the stirrer to mix the nutrient solution for a specified time.
-- **`main()`**: Coordinates the entire process, including monitoring, adjusting pH, managing nutrients, mixing the solution, and rechecking values.
-
-This project description provides a clear overview of the ANMS, its technical features, workflow, and the complete code required to implement the system.
-
----
 
 ### **5. Data Logging and Visualization**
 
