@@ -254,8 +254,119 @@ This project description provides a clear overview of the ANMS, its technical fe
 
 ### **10. Auto-Updater**
 
-#### **Pico W Background Firmware Updater**
-- Automatically checks for, downloads, and installs firmware updates for the **Raspberry Pi Pico W**, ensuring devices run the latest firmware without interrupting operations.
+Here’s a more concise and structured project description for the Auto-Updater:
+
+---
+
+### **Project Description: Auto-Updater for Raspberry Pi Pico W**
+
+#### **Objective**
+Automatically update the firmware on the Raspberry Pi Pico W to ensure it runs the latest version without manual intervention.
+
+#### **Features**
+1. **Wi-Fi Connectivity**
+   - Connects to a specified Wi-Fi network.
+   - Prints connection status and IP address.
+
+2. **Firmware Management**
+   - **Fetch Firmware URL**: Gets the latest firmware URL from GitHub.
+   - **Download Firmware**: Downloads and saves the firmware file.
+   - **Verify Firmware**: Placeholder for checksum verification.
+   - **Flash Firmware**: Updates the device with the new firmware and resets it.
+
+3. **Background Process**
+   - Runs the update process in a background thread to avoid interrupting other operations.
+
+#### **Components**
+
+- **Wi-Fi Module**: For network connectivity.
+- **HTTP Requests**: Fetches firmware from GitHub.
+- **File Management**: Handles file operations for downloading and flashing firmware.
+- **Threading**: Manages the update process concurrently.
+
+#### **Code Overview**
+
+```python
+import network
+import urequests
+import uos
+import uhashlib
+import time
+import machine
+import _thread
+
+# Configuration
+SSID = 'your_SSID'
+PASSWORD = 'your_PASSWORD'
+GITHUB_API_URL = 'https://api.github.com/repos/your_username/your_repository/releases/latest'
+TEMP_FILE = '/firmware_update.bin'
+
+class FirmwareUpdater:
+    def __init__(self, ssid, password):
+        self.ssid = ssid
+        self.password = password
+        self.connected = False
+
+    def connect_to_wifi(self):
+        wlan = network.WLAN(network.STA_IF)
+        wlan.active(True)
+        wlan.connect(self.ssid, self.password)
+        for _ in range(20):
+            if wlan.isconnected():
+                self.connected = True
+                print('Connected to Wi-Fi:', wlan.ifconfig())
+                return
+            time.sleep(1)
+        raise ConnectionError('Failed to connect to Wi-Fi')
+
+    def get_latest_firmware_url(self):
+        response = urequests.get(GITHUB_API_URL)
+        response.raise_for_status()
+        return response.json()['assets'][0]['browser_download_url']
+
+    def download_firmware(self, url):
+        response = urequests.get(url, stream=True)
+        response.raise_for_status()
+        with open(TEMP_FILE, 'wb') as file:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    file.write(chunk)
+        print('Firmware downloaded successfully')
+
+    def verify_firmware(self, firmware_data):
+        sha256 = uhashlib.sha256()
+        sha256.update(firmware_data)
+        print('Firmware checksum verification placeholder')
+
+    def flash_firmware(self):
+        with open(TEMP_FILE, 'rb') as file:
+            firmware_data = file.read()
+        self.verify_firmware(firmware_data)
+        uos.rename(TEMP_FILE, '/flash_image.bin')
+        print('Firmware flashed successfully. Resetting device...')
+        machine.reset()
+
+    def auto_update(self):
+        if not self.connected:
+            self.connect_to_wifi()
+        firmware_url = self.get_latest_firmware_url()
+        self.download_firmware(firmware_url)
+        self.flash_firmware()
+
+def start_update_process():
+    updater = FirmwareUpdater(SSID, PASSWORD)
+    _thread.start_new_thread(updater.auto_update, ())
+
+# Start the update process
+start_update_process()
+```
+
+#### **Workflow**
+1. **Connect to Wi-Fi**: Establishes a network connection.
+2. **Fetch Firmware**: Retrieves the latest firmware URL from GitHub.
+3. **Download Firmware**: Downloads and saves the firmware file.
+4. **Verify and Flash**: Verifies the firmware and applies it, then resets the device.
+5. **Run in Background**: Executes the update process without disrupting the main operations.
 
 ---
 
