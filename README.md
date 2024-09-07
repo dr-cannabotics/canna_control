@@ -77,7 +77,7 @@ The Automated Nutrient Management System (ANMS) is designed to streamline and op
 - **Nutrient Management:** Selection of nutrient tanks based on growth stage and automatic mixing.
 - **Efficient Mixing:** Use of a magnetic stirrer for thorough solution mixing.
 - **Adaptive Rechecking:** Reassessment of pH and EC levels post-adjustment to ensure optimal conditions.
-- 
+  
 ### Complete Code
 
 ```python
