@@ -365,7 +365,7 @@ start_update_process()
 3. **Download Firmware**: Downloads and saves the firmware locally.
 4. **Verify and Flash**: Verifies the firmware's integrity and updates the device.
 5. **Run in Background**: Performs the update process in a background thread to keep the main system operational.
-6. 
+   
 ---
 
 ### **11. Modular Codebase**
