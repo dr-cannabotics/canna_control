@@ -257,34 +257,31 @@ This project description provides a clear overview of the ANMS, its technical fe
 Here’s a more concise and structured project description for the Auto-Updater:
 
 ---
+Here’s a refined version of the project description:
 
-### **Project Description: Auto-Updater for Raspberry Pi Pico W**
+---
 
-#### **Objective**
-Automatically update the firmware on the Raspberry Pi Pico W to ensure it runs the latest version without manual intervention.
+### **Auto-Updater for Raspberry Pi Pico W**
 
-#### **Features**
-1. **Wi-Fi Connectivity**
-   - Connects to a specified Wi-Fi network.
-   - Prints connection status and IP address.
+#### **Overview**
+The Auto-Updater ensures that the Raspberry Pi Pico W maintains the latest firmware automatically, minimizing manual updates and enhancing device performance.
 
-2. **Firmware Management**
-   - **Fetch Firmware URL**: Gets the latest firmware URL from GitHub.
-   - **Download Firmware**: Downloads and saves the firmware file.
-   - **Verify Firmware**: Placeholder for checksum verification.
-   - **Flash Firmware**: Updates the device with the new firmware and resets it.
+#### **Key Features**
 
-3. **Background Process**
-   - Runs the update process in a background thread to avoid interrupting other operations.
+1. **Seamless Wi-Fi Connectivity**
+   - Connects to a pre-configured Wi-Fi network.
+   - Displays connection status and IP address for verification.
 
-#### **Components**
+2. **Efficient Firmware Management**
+   - **Fetch Firmware URL**: Retrieves the latest firmware download link from GitHub.
+   - **Download Firmware**: Saves the firmware file locally for updating.
+   - **Verify Firmware**: Placeholder for verifying file integrity using checksums.
+   - **Flash Firmware**: Updates the device with new firmware and resets it.
 
-- **Wi-Fi Module**: For network connectivity.
-- **HTTP Requests**: Fetches firmware from GitHub.
-- **File Management**: Handles file operations for downloading and flashing firmware.
-- **Threading**: Manages the update process concurrently.
+3. **Background Operation**
+   - Executes the update process in a background thread, ensuring uninterrupted device functionality.
 
-#### **Code Overview**
+#### **Code Summary**
 
 ```python
 import network
@@ -361,13 +358,14 @@ def start_update_process():
 start_update_process()
 ```
 
-#### **Workflow**
-1. **Connect to Wi-Fi**: Establishes a network connection.
-2. **Fetch Firmware**: Retrieves the latest firmware URL from GitHub.
-3. **Download Firmware**: Downloads and saves the firmware file.
-4. **Verify and Flash**: Verifies the firmware and applies it, then resets the device.
-5. **Run in Background**: Executes the update process without disrupting the main operations.
+#### **Process Workflow**
 
+1. **Connect to Wi-Fi**: Connects to the specified network.
+2. **Retrieve Firmware**: Gets the latest firmware URL from GitHub.
+3. **Download Firmware**: Downloads and saves the firmware locally.
+4. **Verify and Flash**: Verifies the firmware's integrity and updates the device.
+5. **Run in Background**: Performs the update process in a background thread to keep the main system operational.
+6. 
 ---
 
 ### **11. Modular Codebase**
