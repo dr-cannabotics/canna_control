@@ -186,10 +186,8 @@ def main():
 # Run the main function
 if __name__ == "__main__":
     main()
+
 ```
-
----
-
 ### **Code Explanation**
 
 1. **read_sensor_data()**:
@@ -208,7 +206,7 @@ if __name__ == "__main__":
    - This is the central function that runs the entire system. It continuously monitors pH and EC levels, adjusts them when necessary, and ensures optimal nutrient solution conditions for plants.
 
 
-```
+---
 
 ### **5. Data Logging and Visualization**
 
