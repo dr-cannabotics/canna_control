@@ -77,24 +77,7 @@ The Automated Nutrient Management System (ANMS) is designed to streamline and op
 - **Nutrient Management:** Selection of nutrient tanks based on growth stage and automatic mixing.
 - **Efficient Mixing:** Use of a magnetic stirrer for thorough solution mixing.
 - **Adaptive Rechecking:** Reassessment of pH and EC levels post-adjustment to ensure optimal conditions.
-
-### Workflow
-
-1. **Monitoring:**
-   - Continuous measurement of pH and electrical conductivity (EC) levels using sensors.
-
-2. **Adjusting pH:**
-   - Use pH-Up or pH-Down pumps based on real-time pH readings.
-
-3. **Managing Nutrients:**
-   - Activate nutrient pumps based on the selected nutrient tank and growth stage.
-
-4. **Mixing Solution:**
-   - Use the stirrer to mix the nutrient solution thoroughly after adjustments.
-
-5. **Rechecking:**
-   - Reassess pH and EC levels after mixing and adjust as needed.
-
+- 
 ### Complete Code
 
 ```python
