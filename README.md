@@ -99,47 +99,70 @@ The Automated Nutrient Management System (ANMS) is designed to streamline and op
 
 ```python
 import time
-from sensors import pH_sensor, EC_sensor
-from pumps import pH_Up_pump, pH_Down_pump, nutrient_pump1, nutrient_pump2, optional_pump
-from stirrer import stirrer
+import machine
+
+# Define GPIO pins for pumps and stirrer
+pH_Up_pin = machine.Pin(17, machine.Pin.OUT)
+pH_Down_pin = machine.Pin(18, machine.Pin.OUT)
+nutrient_pump1_pin = machine.Pin(19, machine.Pin.OUT)
+nutrient_pump2_pin = machine.Pin(20, machine.Pin.OUT)
+optional_pump_pin = machine.Pin(21, machine.Pin.OUT)
+stirrer_pin = machine.Pin(22, machine.Pin.OUT)
+
+# Define ADC pins for pH and EC sensors
+pH_sensor_pin = machine.ADC(26)  # Use ADC0 pin
+EC_sensor_pin = machine.ADC(27)  # Use ADC1 pin
+
+# Calibration values for pH and EC sensors (to be adjusted based on your sensors)
+pH_calibration = 3.0  # Example calibration factor
+EC_calibration = 2.0  # Example calibration factor
 
 # Function to read sensor data
 def read_sensor_data():
-    pH_value = pH_sensor.read()  # Read pH value from sensor
-    EC_value = EC_sensor.read()  # Read EC value from sensor
+    pH_raw = pH_sensor_pin.read_u16()  # Read raw value from ADC
+    EC_raw = EC_sensor_pin.read_u16()  # Read raw value from ADC
+
+    # Convert raw values to pH and EC
+    pH_value = pH_calibration * (pH_raw / 65535)  # Convert raw ADC value to pH
+    EC_value = EC_calibration * (EC_raw / 65535)  # Convert raw ADC value to EC
     return pH_value, EC_value
+
+# Function to stir solution
+def stir_solution():
+    stirrer_pin.value(1)
+    time.sleep(60)  # Stir for 1 minute
+    stirrer_pin.value(0)
 
 # Function to adjust pH level
 def adjust_pH(pH_value, target_pH):
     if pH_value < target_pH - 0.1:
-        pH_Up_pump.activate()
+        pH_Up_pin.value(1)
         time.sleep(60)  # Wait for 1 minute
-        pH_Up_pump.deactivate()
+        pH_Up_pin.value(0)
+        stir_solution()  # Stir after pH adjustment
     elif pH_value > target_pH + 0.1:
-        pH_Down_pump.activate()
+        pH_Down_pin.value(1)
         time.sleep(60)  # Wait for 1 minute
-        pH_Down_pump.deactivate()
+        pH_Down_pin.value(0)
+        stir_solution()  # Stir after pH adjustment
 
 # Function to manage nutrient addition
 def manage_nutrients(target_EC, use_optional_tank=False):
     if use_optional_tank:
-        optional_pump.activate()
+        optional_pump_pin.value(1)
         time.sleep(60)  # Wait for 1 minute
-        optional_pump.deactivate()
+        optional_pump_pin.value(0)
+        stir_solution()  # Stir after nutrient addition
     else:
         if target_EC < 1.5:  # Example threshold for nutrient tank 1
-            nutrient_pump1.activate()
+            nutrient_pump1_pin.value(1)
+            time.sleep(60)  # Wait for 1 minute
+            nutrient_pump1_pin.value(0)
         elif target_EC > 2.0:  # Example threshold for nutrient tank 2
-            nutrient_pump2.activate()
-        time.sleep(60)  # Wait for 1 minute
-        nutrient_pump1.deactivate()
-        nutrient_pump2.deactivate()
-
-# Function to mix nutrient solution
-def mix_solution():
-    stirrer.activate()
-    time.sleep(120)  # Mix for 2 minutes
-    stirrer.deactivate()
+            nutrient_pump2_pin.value(1)
+            time.sleep(60)  # Wait for 1 minute
+            nutrient_pump2_pin.value(0)
+        stir_solution()  # Stir after nutrient addition
 
 # Main workflow
 def main():
@@ -156,9 +179,6 @@ def main():
         # Manage Nutrients
         manage_nutrients(target_EC, use_optional_tank)
         
-        # Mix Solution
-        mix_solution()
-        
         # Recheck pH and EC
         pH_value, EC_value = read_sensor_data()
         if not (target_pH - 0.1 < pH_value < target_pH + 0.1 and target_EC - 0.1 < EC_value < target_EC + 0.1):
@@ -168,6 +188,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 ```
 
 ### Code Explanation
