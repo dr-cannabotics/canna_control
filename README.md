@@ -413,7 +413,7 @@ start_update_process()
 
 - **Autonomous:** Functions independently of external power sources.
 - **Reliable Backup:** Battery ensures uninterrupted operation even with limited solar energy.
-- 
+  
 ---
 
 ## **Technical Architecture**
