@@ -391,7 +391,7 @@ start_update_process()
   - **lcd_display.py:** Manages the LCD display for local monitoring.
   - **auto_updater.py:** Handles background firmware updates for the Pico W.
 ---
-12. **Autonomous Battery-Powered Microcontroller with Solar Charging**
+### 12. **Autonomous Battery-Powered Microcontroller with Solar Charging**
 
 **Battery-Powered Operation**
 
