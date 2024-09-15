@@ -391,7 +391,26 @@ start_update_process()
   - **lcd_display.py:** Manages the LCD display for local monitoring.
   - **auto_updater.py:** Handles background firmware updates for the Pico W.
 
----
+12. **Autonomous Battery-Powered Microcontroller with Solar Charging**
+
+**Battery-Powered Operation**
+
+- Operates autonomously on a rechargeable battery, ensuring continuous function without external power.
+
+**Solar Panel Charging**
+
+- **Solar Panels:** Charges the battery using both natural sunlight and light from grow lamps.
+- **Charging System:** Features a charge controller for efficient and safe battery charging.
+
+**Energy Efficiency**
+
+- **Management:** Minimizes power consumption to extend battery life.
+- **Low Power Modes:** Conserves energy with low-power operational modes.
+
+**Backup and Reliability**
+
+- **Autonomous:** Functions independently of external power sources.
+- **Reliable Backup:** Battery ensures uninterrupted operation even with limited solar energy.
 
 ## **Technical Architecture**
 
