@@ -110,6 +110,63 @@ ssd1306.SSD1306_I2C = _OLED
 sys.modules['ssd1306'] = ssd1306
 sys.modules['I2C'] = types.ModuleType('I2C')
 
+network = types.ModuleType('network')
+
+
+class _WLAN:
+    STA_IF = 0
+
+    def __init__(self, iface):
+        self.on = False
+        self.connected = False
+
+    def active(self, a=None):
+        if a is not None:
+            self.on = a
+        return self.on
+
+    def connect(self, ssid, pw):
+        self.connected = True
+
+    def isconnected(self):
+        return self.connected
+
+    def ifconfig(self):
+        return ('192.168.1.5', '255.255.255.0', '192.168.1.1', '8.8.8.8')
+
+
+network.WLAN = _WLAN
+sys.modules['network'] = network
+
+urequests = types.ModuleType('urequests')
+
+
+class _Resp:
+    status_code = 200
+    text = '{}'
+
+    def close(self):
+        pass
+
+
+_req_state = {'posts': [], 'fail': False}
+
+
+def _post(url, data=None, json=None, headers=None, timeout=None):
+    if _req_state['fail']:
+        raise OSError('connection refused')
+    _req_state['posts'].append((url, data or json))
+    return _Resp()
+
+
+def _get(url, headers=None, timeout=None):
+    return _Resp()
+
+
+urequests.post = _post
+urequests.get = _get
+sys.modules['urequests'] = urequests
+
 from modules.pump import PumpController            # noqa: E402
 from modules.ph import pHController                # noqa: E402
 from modules.ec import ECController                # noqa: E402
@@ -117,6 +174,7 @@ from modules.moisture import MoistureController    # noqa: E402
 from modules.co2 import CO2Controller              # noqa: E402
 from modules.temperature import TemperatureController  # noqa: E402
 from modules.light import LightController          # noqa: E402
+from modules.telemetry import Telemetry            # noqa: E402
 
 
 def adc_pin(voltage):
@@ -329,6 +387,37 @@ class TestANMS(unittest.TestCase):
         anms.update()                       # still low pH, but budget used
         self.assertEqual(anms.state, 'COOLDOWN')
         self.assertIn('MAX_DOSES_REACHED', anms.alarm)
+
+
+class TestTelemetry(unittest.TestCase):
+    def setUp(self):
+        _req_state['posts'] = []
+        _req_state['fail'] = False
+
+    def test_send_and_throttle(self):
+        tel = Telemetry('ssid', 'pw', 'http://dash:420/')
+        self.assertTrue(tel.connect())
+        self.assertTrue(tel.update({'temp': 21}))
+        url, payload = _req_state['posts'][-1]
+        self.assertEqual(url, 'http://dash:420/sensor')
+        self.assertIn('"temp"', payload)
+        # second call right away: throttled, no new post
+        self.assertIsNone(tel.update({'temp': 22}))
+        self.assertEqual(len(_req_state['posts']), 1)
+
+    def test_failure_offline_then_recovery(self):
+        tel = Telemetry('ssid', 'pw', 'http://dash:420')
+        tel.connect()
+        _req_state['fail'] = True
+        self.assertFalse(tel.update({'t': 1}))
+        self.assertEqual(tel.fail_count, 1)
+        self.assertIn('connection refused', tel.last_error)
+        # recovery after interval elapses
+        _req_state['fail'] = False
+        tel.last_send_ms = 0
+        self.assertTrue(tel.update({'t': 1}))
+        self.assertEqual(tel.sent_count, 1)
+        self.assertIsNone(tel.last_error)
 
 
 if __name__ == '__main__':

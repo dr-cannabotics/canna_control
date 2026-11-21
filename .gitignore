@@ -8,6 +8,7 @@ venv/
 config_local.py
 user.py
 *_local.py
+wifi_secrets.py
 .env
 *.secret
 

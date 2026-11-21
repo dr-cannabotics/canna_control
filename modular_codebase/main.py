@@ -21,6 +21,12 @@ from modules.o2 import O2Controller
 from modules.ph import pHController
 from modules.ec import ECController
 from modules.nutrients import NutrientController
+from modules.telemetry import Telemetry
+
+try:
+    from wifi_secrets import WIFI_SSID, WIFI_PASSWORD
+except ImportError:
+    WIFI_SSID = WIFI_PASSWORD = 'CHANGE_ME'
 from modules.lcd_display import LCDDisplayController
 
 # ------------------------- wiring -------------------------
@@ -53,6 +59,11 @@ ANMS_PINS = {
     'optional': 6,     # optional 3rd nutrient tank
     'stirrer': 25,
 }
+
+#: Wi-Fi telemetry -> dashboard /sensor (see modules/telemetry.py).
+#: Put WIFI_SSID / WIFI_PASSWORD in wifi_secrets.py (gitignored).
+ENABLE_TELEMETRY = False
+DASHBOARD_URL = 'http://192.168.1.132:420'
 
 # ------------------------- profile ------------------------
 STAGES = {
@@ -91,6 +102,10 @@ def main():
     anms = None
     if ENABLE_ANMS:
         anms = NutrientController(ctl['ph'], ctl['ec'], **ANMS_PINS)
+    tel = None
+    if ENABLE_TELEMETRY:
+        tel = Telemetry(WIFI_SSID, WIFI_PASSWORD, DASHBOARD_URL)
+        tel.connect()
 
     while True:
         t = ctl['temp'].maintain(heater, cooler, *ctl['prof']['temp'])
@@ -105,6 +120,9 @@ def main():
         ec = ctl['ec'].get_ec_level()
         ctl['lcd'].show_status(t, h, co2,
                                ctl['soil'].get_moisture_percent(), wet)
+        if tel is not None:
+            tel.update({'temp': t, 'rh': h, 'co2': co2, 'ph': ph, 'ec': ec,
+                        'moisture': ctl['soil'].get_moisture_percent()})
         anms_s = anms.status()['state'] if anms else '-'
         print('T={}C RH={}% CO2={}ppm pH={} EC={} moist={}% pump={} anms={}'
               .format(t, h, co2, ph, ec,
