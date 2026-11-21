@@ -111,10 +111,10 @@ sys.modules['ssd1306'] = ssd1306
 sys.modules['I2C'] = types.ModuleType('I2C')
 
 network = types.ModuleType('network')
+network.STA_IF = 0
 
 
 class _WLAN:
-    STA_IF = 0
 
     def __init__(self, iface):
         self.on = False
