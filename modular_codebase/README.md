@@ -20,6 +20,7 @@
 > | `nutrients.py` | `NutrientController` | `(ph, ec, ph_up, ph_down, nutrient_1, nutrient_2, stirrer, optional)` | `update()` — non-blocking ANMS state machine (dose→stir→settle), hard pH/EC limits, dose caps |
 > | `telemetry.py` | `Telemetry` | `(ssid, password, base_url)` | `connect`, `update(readings)` — throttled POST to dashboard `/sensor`, auto-reconnect, never raises into the loop |
 > | `vpd.py` | `VPDController` | `(stage)` | `get_vpd(t, rh)` — Magnus formula; `adjust(humidifier, dehumidifier)` drives relays to stage-specific kPa windows, mould/dry-stress alarms |
+> | `alerts.py` | `AlertManager` + `TelegramTransport` | `(transport, cooldown_s)` | `add_rule(key, pred, msg)`, `evaluate(readings)` — fire-once + cooldown + recovery message; token/chat id via gitignored `alerts_secrets.py` |
 >
 > `main.py` wires everything into one non-blocking control loop with a
 > stage profile (seedling/veg/bloom/ripen). Deploy to a Pico W with

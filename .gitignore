@@ -9,6 +9,7 @@ config_local.py
 user.py
 *_local.py
 wifi_secrets.py
+alerts_secrets.py
 .env
 *.secret
 

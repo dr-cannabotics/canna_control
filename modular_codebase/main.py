@@ -23,11 +23,18 @@ from modules.ec import ECController
 from modules.nutrients import NutrientController
 from modules.telemetry import Telemetry
 from modules.vpd import VPDController
+from modules.alerts import (AlertManager, TelegramTransport,
+                            ConsoleTransport)
 
 try:
     from wifi_secrets import WIFI_SSID, WIFI_PASSWORD
 except ImportError:
     WIFI_SSID = WIFI_PASSWORD = 'CHANGE_ME'
+
+try:
+    from alerts_secrets import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
+except ImportError:
+    TELEGRAM_TOKEN = TELEGRAM_CHAT_ID = None
 from modules.lcd_display import LCDDisplayController
 
 # ------------------------- wiring -------------------------
@@ -69,6 +76,10 @@ DASHBOARD_URL = 'http://192.168.1.132:420'
 #: If True, humidifier/dehumidifier are driven by VPD targets for the
 #: stage instead of raw RH bands (usually better for plant growth).
 USE_VPD_CONTROL = False
+
+#: Telegram alerts; put TELEGRAM_TOKEN / TELEGRAM_CHAT_ID in
+#: alerts_secrets.py (gitignored). Without them alerts print locally only.
+ENABLE_ALERTS = False
 
 # ------------------------- profile ------------------------
 STAGES = {
@@ -112,6 +123,23 @@ def main():
     if ENABLE_TELEMETRY:
         tel = Telemetry(WIFI_SSID, WIFI_PASSWORD, DASHBOARD_URL)
         tel.connect()
+    al = None
+    if ENABLE_ALERTS:
+        transport = (TelegramTransport(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)
+                     if TELEGRAM_TOKEN else ConsoleTransport())
+        al = AlertManager(transport=transport)
+        al.add_rule('temp_high',
+                    lambda r: r['temp'] is not None and r['temp'] > 32,
+                    'Temp ueber 32C')
+        al.add_rule('ph_low',
+                    lambda r: r['ph'] is not None and r['ph'] < 5.0,
+                    'pH zu sauer')
+        al.add_rule('ph_high',
+                    lambda r: r['ph'] is not None and r['ph'] > 7.5,
+                    'pH zu basisch')
+        al.add_rule('ec_high',
+                    lambda r: r['ec'] is not None and r['ec'] > 3.0,
+                    'EC ueber 3.0 mS/cm')
 
     while True:
         t = ctl['temp'].maintain(heater, cooler, *ctl['prof']['temp'])
@@ -136,6 +164,8 @@ def main():
         if tel is not None:
             tel.update({'temp': t, 'rh': h, 'co2': co2, 'ph': ph, 'ec': ec,
                         'moisture': ctl['soil'].get_moisture_percent()})
+        if al is not None:
+            al.evaluate({'temp': t, 'rh': h, 'co2': co2, 'ph': ph, 'ec': ec})
         anms_s = anms.status()['state'] if anms else '-'
         print('T={}C RH={}% CO2={}ppm pH={} EC={} moist={}% pump={} anms={} vpd={}'
               .format(t, h, co2, ph, ec,

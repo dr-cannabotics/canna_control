@@ -176,6 +176,7 @@ from modules.temperature import TemperatureController  # noqa: E402
 from modules.light import LightController          # noqa: E402
 from modules.telemetry import Telemetry            # noqa: E402
 from modules.vpd import VPDController              # noqa: E402
+from modules.alerts import AlertManager, TelegramTransport  # noqa: E402
 
 
 def adc_pin(voltage):
@@ -448,6 +449,50 @@ class TestVPD(unittest.TestCase):
         c.get_vpd(25.0, 98.0)
         c.adjust(None, None)
         self.assertIn('VPD_MOULD_RISK', c.alarm)
+
+
+class _FakeTransport:
+    def __init__(self):
+        self.texts = []
+        self.last_error = None
+
+    def send(self, text):
+        self.texts.append(text)
+        return True
+
+
+class TestAlerts(unittest.TestCase):
+    def test_fire_cooldown_recovery(self):
+        tr = _FakeTransport()
+        al = AlertManager(transport=tr, cooldown_s=600)
+        al.add_rule('temp_high', lambda r: (r['temp'] or 0) > 32, 'Temp >32C')
+        al.evaluate({'temp': 33})
+        self.assertEqual(tr.texts, ['ALARM temp_high: Temp >32C'])
+        al.evaluate({'temp': 33})            # still hot, inside cooldown
+        self.assertEqual(len(tr.texts), 1)   # no spam
+        al.evaluate({'temp': 25})
+        self.assertEqual(tr.texts[-1], 'OK temp_high: Temp >32C')
+        self.assertEqual(al.status()['active'], [])
+
+    def test_bad_sensor_never_crashes(self):
+        tr = _FakeTransport()
+        al = AlertManager(transport=tr)
+        al.add_rule('ph_low', lambda r: r['ph'] < 5.0, 'pH sauer')
+        al.evaluate({'ph': None})            # TypeError inside rule
+        self.assertEqual(tr.texts, [])
+
+    def test_telegram_transport_posts(self):
+        _req_state['posts'] = []
+        _req_state['fail'] = False
+        tr = TelegramTransport('TOK', '42')
+        self.assertTrue(tr.send('hi'))
+        url, payload = _req_state['posts'][-1]
+        self.assertEqual(url,
+                         'https://api.telegram.org/botTOK/sendMessage')
+        self.assertIn('"chat_id": "42"', payload.replace('\'', '"'))
+        _req_state['fail'] = True
+        self.assertFalse(tr.send('hi'))
+        self.assertIn('connection refused', tr.last_error)
 
 
 if __name__ == '__main__':
