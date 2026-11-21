@@ -22,6 +22,7 @@ from modules.ph import pHController
 from modules.ec import ECController
 from modules.nutrients import NutrientController
 from modules.telemetry import Telemetry
+from modules.vpd import VPDController
 
 try:
     from wifi_secrets import WIFI_SSID, WIFI_PASSWORD
@@ -65,6 +66,10 @@ ANMS_PINS = {
 ENABLE_TELEMETRY = False
 DASHBOARD_URL = 'http://192.168.1.132:420'
 
+#: If True, humidifier/dehumidifier are driven by VPD targets for the
+#: stage instead of raw RH bands (usually better for plant growth).
+USE_VPD_CONTROL = False
+
 # ------------------------- profile ------------------------
 STAGES = {
     'seedling': dict(light_hours=20, intensity=35, temp=(22, 26), rh=(55, 70)),
@@ -89,8 +94,9 @@ def build(stage=STAGE):
     ph = pHController(PINMAP['ph'])
     ec = ECController(PINMAP['ec'])
     lcd = LCDDisplayController(PINMAP['lcd_sda'], PINMAP['lcd_scl'])
+    vpd = VPDController(stage)
     return dict(pump=pump, soil=soil, temp=temp, hum=hum, light=light,
-                co2=co2, o2=o2, ph=ph, ec=ec, lcd=lcd, prof=prof)
+                co2=co2, o2=o2, ph=ph, ec=ec, lcd=lcd, vpd=vpd, prof=prof)
 
 
 def main():
@@ -109,7 +115,14 @@ def main():
 
     while True:
         t = ctl['temp'].maintain(heater, cooler, *ctl['prof']['temp'])
-        h = ctl['hum'].maintain(humid, dehum, *ctl['prof']['rh'])
+        if USE_VPD_CONTROL:
+            h = ctl['hum'].get_humidity()
+            ctl['vpd'].get_vpd(t, h)
+            vpd_s = ctl['vpd'].adjust(humid, dehum)
+        else:
+            h = ctl['hum'].maintain(humid, dehum, *ctl['prof']['rh'])
+            v = ctl['vpd'].get_vpd(t, h)
+            vpd_s = '{:.2f}'.format(v) if v is not None else 'N/A'
         ctl['light'].update()
         co2 = ctl['co2'].get_co2_level()
         wet = ctl['soil'].irrigate_if_needed(ctl['pump'],
@@ -124,9 +137,9 @@ def main():
             tel.update({'temp': t, 'rh': h, 'co2': co2, 'ph': ph, 'ec': ec,
                         'moisture': ctl['soil'].get_moisture_percent()})
         anms_s = anms.status()['state'] if anms else '-'
-        print('T={}C RH={}% CO2={}ppm pH={} EC={} moist={}% pump={} anms={}'
+        print('T={}C RH={}% CO2={}ppm pH={} EC={} moist={}% pump={} anms={} vpd={}'
               .format(t, h, co2, ph, ec,
-                      ctl['soil'].get_moisture_percent(), wet, anms_s))
+                      ctl['soil'].get_moisture_percent(), wet, anms_s, vpd_s))
         time.sleep(2)
 
 

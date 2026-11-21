@@ -175,6 +175,7 @@ from modules.co2 import CO2Controller              # noqa: E402
 from modules.temperature import TemperatureController  # noqa: E402
 from modules.light import LightController          # noqa: E402
 from modules.telemetry import Telemetry            # noqa: E402
+from modules.vpd import VPDController              # noqa: E402
 
 
 def adc_pin(voltage):
@@ -418,6 +419,35 @@ class TestTelemetry(unittest.TestCase):
         self.assertTrue(tel.update({'t': 1}))
         self.assertEqual(tel.sent_count, 1)
         self.assertIsNone(tel.last_error)
+
+
+class TestVPD(unittest.TestCase):
+    def test_vpd_value(self):
+        v = VPDController().get_vpd(24.0, 50.0)
+        # Magnus: SVP(24C)=29.8hPa -> VPD = 29.8*0.5/10 = 1.49 kPa
+        self.assertAlmostEqual(v, 1.49, delta=0.02)
+
+    def test_stage_bounds_and_relays(self):
+        c = VPDController('veg')          # 0.8 - 1.2 kPa
+        hum, dehum = PumpController(17), PumpController(18)
+        c.get_vpd(20.0, 95.0)             # very low VPD
+        self.assertEqual(c.adjust(hum, dehum), 'TOO_LOW')
+        self.assertTrue(dehum.is_running())
+        c.get_vpd(30.0, 30.0)             # very high VPD
+        self.assertEqual(c.adjust(hum, dehum), 'TOO_HIGH')
+        self.assertTrue(hum.is_running())
+        self.assertFalse(dehum.is_running())
+        self.assertIn('VPD_DRY_STRESS', c.alarm)
+        c.get_vpd(24.0, 72.0)             # ~0.83 kPa: in veg band
+        self.assertEqual(c.adjust(hum, dehum), 'IN_RANGE')
+        self.assertFalse(hum.is_running())
+        self.assertFalse(dehum.is_running())
+
+    def test_mould_alarm(self):
+        c = VPDController('bloom')
+        c.get_vpd(25.0, 98.0)
+        c.adjust(None, None)
+        self.assertIn('VPD_MOULD_RISK', c.alarm)
 
 
 if __name__ == '__main__':
