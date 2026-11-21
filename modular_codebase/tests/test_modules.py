@@ -244,5 +244,92 @@ class TestLight(unittest.TestCase):
         self.assertTrue(0 < d < 65535)
 
 
+class FakePH:
+    def __init__(self, v):
+        self.v = v
+
+    def get_ph_level(self):
+        return self.v
+
+
+class FakeEC:
+    def __init__(self, v):
+        self.v = v
+
+    def get_ec_level(self):
+        return self.v
+
+
+class TestANMS(unittest.TestCase):
+    """Drive the NutrientController state machine with a fake clock."""
+
+    def setUp(self):
+        import modules.nutrients as nutrients_mod
+        import modules.pump as pump_mod
+        self.clock = {'t': 0}
+        self._real = (nutrients_mod.ticks_ms, pump_mod.ticks_ms)
+        nutrients_mod.ticks_ms = pump_mod.ticks_ms = \
+            lambda: self.clock['t']
+        self.nutrients_mod = nutrients_mod
+
+    def tearDown(self):
+        import modules.nutrients as nutrients_mod
+        import modules.pump as pump_mod
+        nutrients_mod.ticks_ms, pump_mod.ticks_ms = self._real
+
+    def advance(self, s):
+        self.clock['t'] += s * 1000
+
+    def _mk(self, ph_v, ec_v):
+        anms = self.nutrients_mod.NutrientController(
+            FakePH(ph_v), FakeEC(ec_v),
+            ph_up=17, ph_down=18, nutrient_1=19, nutrient_2=20, stirrer=22)
+        anms.check_interval_s = 0
+        anms.stir_s, anms.settle_s = 60, 30
+        return anms
+
+    def test_ph_first_then_ec(self):
+        anms = self._mk(5.6, 1.5)
+        anms.update()                       # pH too low -> dose pH-up
+        self.assertEqual(anms.state, 'DOSE')
+        self.assertTrue(anms.pumps['ph_up'].is_running())
+        # dose 0.4 ml at 1.5 ml/min = 16 s -> then stir 60 s -> settle 30 s
+        self.advance(20)
+        anms.update()
+        self.assertEqual(anms.state, 'STIR')
+        self.assertFalse(anms.pumps['ph_up'].is_running())
+        self.assertTrue(anms.stirrer.is_running())
+        anms.ph.v, anms.ec.v = 6.0, 1.5            # sensors recover
+        self.advance(100)
+        anms.update()                       # stir done -> SETTLE
+        self.assertEqual(anms.state, 'SETTLE')
+        self.advance(30)
+        anms.update()                       # pH in band, EC low -> nutrient
+        self.assertEqual(anms.state, 'DOSE')
+        self.assertTrue(anms.pumps['nutrient_1'].is_running())
+        self.assertEqual(anms.doses_this_cycle, 2)
+
+    def test_hard_limit_blocks_dosing(self):
+        anms = self._mk(3.0, 1.5)
+        anms.update()
+        self.assertEqual(anms.state, 'COOLDOWN')
+        self.assertIn('PH_OUT_OF_RANGE', anms.alarm)
+        for p in anms.pumps.values():
+            self.assertFalse(p.is_running())
+
+    def test_ec_high_asks_for_flush(self):
+        anms = self._mk(6.0, 2.9)
+        anms.update()
+        self.assertEqual(anms.state, 'COOLDOWN')
+        self.assertIn('flush', anms.alarm)
+
+    def test_max_doses_alarm(self):
+        anms = self._mk(5.6, 1.8)
+        anms.doses_this_cycle = anms.max_doses_per_cycle
+        anms.update()                       # still low pH, but budget used
+        self.assertEqual(anms.state, 'COOLDOWN')
+        self.assertIn('MAX_DOSES_REACHED', anms.alarm)
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

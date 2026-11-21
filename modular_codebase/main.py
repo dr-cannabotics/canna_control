@@ -20,6 +20,7 @@ from modules.co2 import CO2Controller
 from modules.o2 import O2Controller
 from modules.ph import pHController
 from modules.ec import ECController
+from modules.nutrients import NutrientController
 from modules.lcd_display import LCDDisplayController
 
 # ------------------------- wiring -------------------------
@@ -39,6 +40,18 @@ PINMAP = {
     'temp': 20,           # DHT22 data
     'lcd_sda': 0,
     'lcd_scl': 1,
+}
+
+#: ANMS dosing pumps (peristaltic) + stirrer — enable only for hydro
+#: setups and check for relay-pin clashes with PINMAP first.
+ENABLE_ANMS = False
+ANMS_PINS = {
+    'ph_up': 2,        # baking-soda solution
+    'ph_down': 3,      # citric acid
+    'nutrient_1': 4,
+    'nutrient_2': 5,
+    'optional': 6,     # optional 3rd nutrient tank
+    'stirrer': 25,
 }
 
 # ------------------------- profile ------------------------
@@ -75,6 +88,9 @@ def main():
     cooler = PumpController(PINMAP['cooler'])
     humid = PumpController(PINMAP['humidifier'])
     dehum = PumpController(PINMAP['dehumidifier'])
+    anms = None
+    if ENABLE_ANMS:
+        anms = NutrientController(ctl['ph'], ctl['ec'], **ANMS_PINS)
 
     while True:
         t = ctl['temp'].maintain(heater, cooler, *ctl['prof']['temp'])
@@ -83,12 +99,16 @@ def main():
         co2 = ctl['co2'].get_co2_level()
         wet = ctl['soil'].irrigate_if_needed(ctl['pump'],
                                              dry_pct=35, wet_pct=60)
+        if anms is not None:
+            anms.update()
         ph = ctl['ph'].get_ph_level()
         ec = ctl['ec'].get_ec_level()
         ctl['lcd'].show_status(t, h, co2,
                                ctl['soil'].get_moisture_percent(), wet)
-        print('T={}C RH={}% CO2={}ppm pH={} EC={} moist={}% pump={}'.format(
-            t, h, co2, ph, ec, ctl['soil'].get_moisture_percent(), wet))
+        anms_s = anms.status()['state'] if anms else '-'
+        print('T={}C RH={}% CO2={}ppm pH={} EC={} moist={}% pump={} anms={}'
+              .format(t, h, co2, ph, ec,
+                      ctl['soil'].get_moisture_percent(), wet, anms_s))
         time.sleep(2)
 
 
