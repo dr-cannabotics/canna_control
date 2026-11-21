@@ -25,6 +25,7 @@ from modules.telemetry import Telemetry
 from modules.vpd import VPDController
 from modules.alerts import (AlertManager, TelegramTransport,
                             ConsoleTransport)
+from modules.lux_sensor import LuxSensor
 
 try:
     from wifi_secrets import WIFI_SSID, WIFI_PASSWORD
@@ -81,6 +82,9 @@ USE_VPD_CONTROL = False
 #: alerts_secrets.py (gitignored). Without them alerts print locally only.
 ENABLE_ALERTS = False
 
+#: Optional BH1750 lux sensor on the display I2C bus (sda/scl from PINMAP).
+ENABLE_LUX_SENSOR = False
+
 # ------------------------- profile ------------------------
 STAGES = {
     'seedling': dict(light_hours=20, intensity=35, temp=(22, 26), rh=(55, 70)),
@@ -91,7 +95,7 @@ STAGES = {
 STAGE = 'veg'
 
 
-def build(stage=STAGE):
+def build(stage=STAGE) -> 'dict':
     prof = STAGES[stage]
     pump = PumpController(PINMAP['pump1'])
     soil = MoistureController(PINMAP['soil'])
@@ -106,8 +110,11 @@ def build(stage=STAGE):
     ec = ECController(PINMAP['ec'])
     lcd = LCDDisplayController(PINMAP['lcd_sda'], PINMAP['lcd_scl'])
     vpd = VPDController(stage)
+    lux = (LuxSensor(PINMAP['lcd_sda'], PINMAP['lcd_scl'])
+           if ENABLE_LUX_SENSOR else None)
     return dict(pump=pump, soil=soil, temp=temp, hum=hum, light=light,
-                co2=co2, o2=o2, ph=ph, ec=ec, lcd=lcd, vpd=vpd, prof=prof)
+                co2=co2, o2=o2, ph=ph, ec=ec, lcd=lcd, vpd=vpd, lux=lux,
+                prof=prof)
 
 
 def main():
@@ -161,15 +168,20 @@ def main():
         ec = ctl['ec'].get_ec_level()
         ctl['lcd'].show_status(t, h, co2,
                                ctl['soil'].get_moisture_percent(), wet)
+        lux = ctl['lux']
+        lux_val = lux.read_lux() if lux is not None else None
         if tel is not None:
             tel.update({'temp': t, 'rh': h, 'co2': co2, 'ph': ph, 'ec': ec,
-                        'moisture': ctl['soil'].get_moisture_percent()})
+                        'moisture': ctl['soil'].get_moisture_percent(),
+                        'lux': lux_val})
         if al is not None:
             al.evaluate({'temp': t, 'rh': h, 'co2': co2, 'ph': ph, 'ec': ec})
         anms_s = anms.status()['state'] if anms else '-'
-        print('T={}C RH={}% CO2={}ppm pH={} EC={} moist={}% pump={} anms={} vpd={}'
+        print('T={}C RH={}% CO2={}ppm pH={} EC={} moist={}% pump={} anms={}'
+              ' vpd={} lux={}'
               .format(t, h, co2, ph, ec,
-                      ctl['soil'].get_moisture_percent(), wet, anms_s, vpd_s))
+                      ctl['soil'].get_moisture_percent(), wet, anms_s,
+                      vpd_s, lux_val))
         time.sleep(2)
 
 

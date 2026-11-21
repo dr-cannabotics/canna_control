@@ -21,6 +21,7 @@
 > | `telemetry.py` | `Telemetry` | `(ssid, password, base_url)` | `connect`, `update(readings)` — throttled POST to dashboard `/sensor`, auto-reconnect, never raises into the loop |
 > | `vpd.py` | `VPDController` | `(stage)` | `get_vpd(t, rh)` — Magnus formula; `adjust(humidifier, dehumidifier)` drives relays to stage-specific kPa windows, mould/dry-stress alarms |
 > | `alerts.py` | `AlertManager` + `TelegramTransport` | `(transport, cooldown_s)` | `add_rule(key, pred, msg)`, `evaluate(readings)` — fire-once + cooldown + recovery message; token/chat id via gitignored `alerts_secrets.py` |
+> | `lux_sensor.py` | `LuxSensor` | `(sda, scl, addr=0x23)` | `read_lux()` — BH1750 single-shot on the display I2C bus, `None` if sensor missing |
 >
 > `main.py` wires everything into one non-blocking control loop with a
 > stage profile (seedling/veg/bloom/ripen). Deploy to a Pico W with

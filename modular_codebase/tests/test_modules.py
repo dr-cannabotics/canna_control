@@ -177,6 +177,7 @@ from modules.light import LightController          # noqa: E402
 from modules.telemetry import Telemetry            # noqa: E402
 from modules.vpd import VPDController              # noqa: E402
 from modules.alerts import AlertManager, TelegramTransport  # noqa: E402
+from modules.lux_sensor import LuxSensor                    # noqa: E402
 
 
 def adc_pin(voltage):
@@ -493,6 +494,37 @@ class TestAlerts(unittest.TestCase):
         _req_state['fail'] = True
         self.assertFalse(tr.send('hi'))
         self.assertIn('connection refused', tr.last_error)
+
+
+class _FakeI2C:
+    def __init__(self, reply=b'\x00\x75', fail=False):
+        self.reply = reply
+        self.fail = fail
+        self.written = []
+
+    def writeto(self, addr, buf):
+        if self.fail:
+            raise OSError('i2c nack')
+        self.written.append((addr, bytes(buf)))
+
+    def readfrom(self, addr, n):
+        if self.fail:
+            raise OSError('i2c nack')
+        return bytearray(self.reply)
+
+
+class TestLux(unittest.TestCase):
+    def test_read_lux(self):
+        bus = _FakeI2C(reply=b'\x00\x75')     # datasheet example
+        s = LuxSensor(0, 1, i2c=bus)
+        val = s.read_lux()
+        self.assertIsNotNone(val)
+        self.assertAlmostEqual(val, 97.5, delta=0.01)
+        self.assertEqual(bus.written[0], (0x23, b'\x20'))
+
+    def test_missing_sensor_returns_none(self):
+        s = LuxSensor(0, 1, i2c=_FakeI2C(fail=True))
+        self.assertIsNone(s.read_lux())
 
 
 if __name__ == '__main__':
