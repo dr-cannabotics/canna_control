@@ -1,5 +1,22 @@
 ### Advanced Automated Cannabis Irrigation System with Soil Moisture Control
 
+> **Implemented in [`pumpcontrol.ino`](arduino_pumpcontrol.ino).** Wiring and behavior of the current sketch:
+>
+> | Pin | Function |
+> |-----|----------|
+> | D8 | Relay module (LOW-active) → irrigation pump |
+> | A0 | Capacitive soil moisture sensor |
+> | D2 / D3 | Rotary encoder (A / B), push button to GND |
+> | I2C (A4/A5) | 16x2 LCD at address 0x27, DS3231 RTC |
+>
+> Arduino library dependencies: `LiquidCrystal_I2C`, `RTClib`, `Encoder`.
+>
+> The sketch runs a **stage profile** (SEEDLING / VEG / BLOOM / RIPEN,
+> cycled with the encoder button). Each stage defines a minimum interval
+> between waterings and a pump run duration. Irrigation triggers when the
+> A0 reading drops below `dryThreshold` (400), stops at `wetThreshold`
+> (600) or after the stage's run duration — no continuous toggling.
+
 Advanced automated irrigation system for cannabis cultivation that manages watering schedules based on plant growth stages and integrates soil moisture sensing to optimize hydration. The system will ensure plants receive the right amount of water by adjusting irrigation based on real-time soil moisture levels.
 
 ### System Overview

@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local secrets / device config — never commit real credentials
+config_local.py
+user.py
+*_local.py
+.env
+*.secret
+
+# Arduino build output
+build/
+*.elf
+*.hex
+*.bin
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

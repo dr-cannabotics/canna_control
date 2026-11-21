@@ -1,5 +1,30 @@
 ### Key Modules
 
+> **Current implementation (code is authoritative).** Every module takes
+> its pin(s) in the constructor and is import-safe on CPython for unit
+> tests (`python3 -m unittest discover -s modular_codebase/tests`).
+>
+> | Module | Class | Constructor | Key methods |
+> |--------|-------|-------------|-------------|
+> | `pump.py` | `PumpController` | `(pin)` | `activate/deactivate`, `run(max_s)`, `is_running`, `set_state` |
+> | `moisture.py` | `MoistureController` | `(pin, dry_raw, wet_raw)` | `get_moisture_percent`, `calibrate`, `irrigate_if_needed(pump)` |
+> | `ph.py` | `pHController` | `(pin)` | `get_ph_level`, `calibrate(buffer_ph=7/4)` |
+> | `ec.py` | `ECController` | `(pin)` | `get_ec_level` (mS/cm), `get_tds_ppm`, `calibrate` |
+> | `co2.py` | `CO2Controller` | `(pin)` | `get_co2_level`, `calibrate_fresh_air`, `maintain(actuator, low, high)` |
+> | `o2.py` | `O2Controller` | `(pin, sensor_pin=None)` | `activate/deactivate`, `get_o2_level` (None w/o sensor) |
+> | `temperature.py` | `TemperatureController` | `(pin)` DHT22 | `get_temperature`, `maintain(heater, cooler, low, high)` |
+> | `humidity.py` | `HumidityController` | `(pin)` DHT22 | `get_humidity`, `maintain(humidifier, dehumidifier, low, high)` |
+> | `light.py` | `LightController` | `(pin, ramp_minutes)` | `set_schedule`, `set_intensity`, `update()` (non-blocking ramps) |
+> | `lcd_display.py` | `LCDDisplayController` | `(sda, scl)` SSD1306 | `show_status`, `show_soil_moisture`, `show_pump_status` |
+> | `autoupdater.py` | `AutoUpdater` | `()` | `check_for_updates`, `download_update`, `install_update` (GitHub Releases) |
+>
+> `main.py` wires everything into one non-blocking control loop with a
+> stage profile (seedling/veg/bloom/ripen). Deploy to a Pico W with
+> `mpremote cp main.py modules/* :` after setting the PINMAP.
+
+The usage examples below describe the target API; where they differ from
+the table, the table matches the shipped code.
+
 1. **Pump Controller (`pump.py`)**
 
    **Description:**

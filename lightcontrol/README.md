@@ -1,5 +1,21 @@
 ### Automated Cannabis Grow Light Control System
 
+> **Implemented in [`lightcontrol.ino`](arduino_lightcontrol.ino).** Wiring and behavior of the current sketch:
+>
+> | Pin | Function |
+> |-----|----------|
+> | D9 | PWM → transistor → SANlight 0–10 V dim input |
+> | D10 | Relay module (LOW-active) → 24 V mains contactor (optional) |
+> | D7 | Push button to GND (cycles SEEDLING/VEG/BLOOM/RIPEN) |
+> | D2 / D3 | Rotary encoder (A / B); rotates ±5 % manual trim |
+> | I2C (A4/A5) | 16x2 LCD at address 0x27, DS3231 RTC |
+>
+> Arduino library dependencies: `LiquidCrystal_I2C`, `RTClib`, `Encoder`.
+>
+> Per stage: `SEEDLING 20 h/35 %`, `VEG 18 h/60 %`, `BLOOM 12 h/100 %`,
+> `RIPEN 12 h/65 %`. Lights switch on at 06:00 (RTC) with a 30-minute
+> sunrise ramp and ramp down 30 minutes before switch-off.
+
 Advanced automated lighting control system for cannabis cultivation. This system will simulate natural sunlight cycles, adjust light intensity and duration according to various growth stages, and provide real-time updates with manual adjustment options.
 
 #### System Overview

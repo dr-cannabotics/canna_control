@@ -86,6 +86,8 @@
                 <div class="sensor-card"><i class="fas fa-apple-alt"></i><div><h3>Air Quality</h3><p id="airQuality">N/A</p></div></div>
                 <div class="sensor-card"><i class="fas fa-temperature-low"></i><div><h3>Leaf Temperature</h3><p id="leafTemperature">N/A</p></div></div>
                 <div class="sensor-card"><i class="fas fa-tint"></i><div><h3>Water Consumption</h3><p id="waterConsumption">N/A</p></div></div>
+                <div class="sensor-card"><i class="fas fa-sync-alt"></i><div><h3>Air Change Rate</h3><p id="airChangeRate">N/A</p></div></div>
+                <div class="sensor-card"><i class="fas fa-sun"></i><div><h3>UV Intensity</h3><p id="uvLightIntensity">N/A</p></div></div>
             </div>
         </div>
         <div class="info-box">
@@ -183,10 +185,10 @@
                 .then(response => response.json())
                 .then(data => {
                     for (let i = 0; i < 4; i++) {
-                        const button = document.getElementById(toggleRelay${i}Btn);
-                        const statusDiv = document.getElementById(relayStatus${i});
+                        const button = document.getElementById('toggleRelay' + i + 'Btn');
+                        const statusDiv = document.getElementById('relayStatus' + i);
                         const statusSpan = statusDiv.querySelector('span:last-child');
-                        if (data[relay_${i}] === 'ON') {
+                        if (data['relay_' + i] === 'ON') {
                             statusSpan.textContent = 'ON';
                             button.classList.remove('off');
                             button.classList.add('on');
@@ -229,7 +231,9 @@
                     document.getElementById('growthRate').textContent = data.growthRate !== null ? data.growthRate + ' cm/day' : 'N/A';
                     document.getElementById('airQuality').textContent = data.airQuality !== null ? data.airQuality : 'N/A';
                     document.getElementById('leafTemperature').textContent = data.leafTemperature !== null ? data.leafTemperature + ' °C' : 'N/A';
-                    document.getElementById('waterConsumption').textContent = data.waterConsumption !== null ? data.waterConsumption + ' L/day' : 'N/A';
+                    document.getElementById('waterConsumption').textContent = data.waterConsumption != null ? data.waterConsumption + ' L/day' : 'N/A';
+                    document.getElementById('airChangeRate').textContent = data.airChangeRate != null ? data.airChangeRate + ' /h' : 'N/A';
+                    document.getElementById('uvLightIntensity').textContent = data.uvLightIntensity != null ? data.uvLightIntensity + ' UV index' : 'N/A';
 
                     // Update the temperature chart
                     const now = new Date().toLocaleTimeString();
@@ -264,7 +268,7 @@
             const now = new Date();
             const date = now.toLocaleDateString();
             const time = now.toLocaleTimeString();
-            document.getElementById('datetime').textContent = ${date} ${time};
+            document.getElementById('datetime').textContent = date + ' ' + time;
         }
 
         // Function to toggle relay
@@ -302,7 +306,10 @@
             toggleRelay('relay_3');
         });
 
-        // Update status, sensor data, and date/time every 1 second
+        // Draw once immediately, then refresh every second
+        updateStatus();
+        updateSensorData();
+        updateDateTime();
         setInterval(() => {
             updateStatus();
             updateSensorData();

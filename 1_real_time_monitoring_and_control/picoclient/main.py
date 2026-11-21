@@ -6,15 +6,23 @@ from machine import Pin, PWM
 import time
 import random
 
-SSID = 'WifiName'
-PASSWORD = 'WifiPasswoed'
+# ---------------------- configuration ----------------------
+WIFI_SSID = 'your-ssid'
+WIFI_PASSPHRASE = 'your-wifi-key'
 
-FLASK_URL_STATUS = 'http://212.000.00.00:420/status'
-FLASK_URL_SENSOR = 'http://212.000.00.00:420/sensor'
+# Host running flask_server.py (flaskserver/). Port 420.
+SERVER_HOST = '192.168.1.100'
+FLASK_URL_STATUS = f'http://{SERVER_HOST}:420/status'
+FLASK_URL_SENSOR = f'http://{SERVER_HOST}:420/sensor'
 
-INFLUXDB_URL = 'http://http://212.000.00.00:8086/api/v2/write?org=sensorboard&bucket=cannabucket'
+# Optional InfluxDB v2 for long-term graphs (skipped when INFLUX_TOKEN empty)
+INFLUXDB_URL = f'http://{SERVER_HOST}:8086/api/v2/write?org=sensorboard&bucket=cannabucket&precision=ns'
 INFLUXDB_MEASUREMENT = 'sensorboard'
-INFLUXDB_TOKEN = 'INFLUXTOKEN'
+INFLUX_TOKEN = ''
+
+# True: unconnected sensors report plausible simulated values
+SIMULATED = True
+# ------------------------------------------------------------
 
 RELAY_PINS = [Pin(i, Pin.OUT) for i in (1, 2, 3, 4)]
 
@@ -44,7 +52,7 @@ def play_melodic_tone():
 def connect_to_wifi():
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
-    wlan.connect(SSID, PASSWORD)
+    wlan.connect(WIFI_SSID, WIFI_PASSPHRASE)
     
     print("Attempting to connect to WiFi...")
     timeout = time.time() + 30
@@ -54,7 +62,7 @@ def connect_to_wifi():
         time.sleep(5)
         
     if wlan.isconnected():
-        print(f"Connected to {SSID} with IP address {wlan.ifconfig()[0]}")
+        print(f"Connected to {WIFI_SSID} with IP address {wlan.ifconfig()[0]}")
         play_melodic_tone()
     else:
         print("Failed to connect to WiFi within timeout period.")
@@ -116,11 +124,13 @@ def send_data_to_flask(data):
         print(f'[ERROR] Error sending data to Flask server: {e}')
 
 def send_data_to_influxdb(data):
+    if not INFLUX_TOKEN:
+        return
     try:
         influx_payload = f"{INFLUXDB_MEASUREMENT} "
         influx_payload += ','.join([f"{key}={value}" for key, value in data.items() if value is not None])
         headers = {
-            'Authorization': f'Token {INFLUXDB_TOKEN}',
+            'Authorization': f'Token {INFLUX_TOKEN}',
             'Content-Type': 'text/plain'
         }
         response = urequests.post(INFLUXDB_URL, data=influx_payload, headers=headers)
@@ -151,4 +161,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

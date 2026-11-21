@@ -1,6 +1,25 @@
 
 # **Integrated Cannabis Cultivation Management System (ICCMS)**
 
+> **Repository status (honest snapshot).** What is implemented and working today:
+>
+> - `pumpcontrol/` + `lightcontrol/` — Arduino sketches for stage-based
+>   irrigation (dry 400 / wet 600 thresholds, RTC + encoder + LCD) and
+>   SANlight 0–10 V photoperiod dimming with sunrise/sunset ramps.
+>   Compile clean with `arduino-cli compile --fqbn arduino:avr:uno`.
+> - `1_real_time_monitoring_and_control/` — Flask dashboard (port 420)
+>   + Pico W client (DHT22 readings; the other 19 sensor values are
+>   explicitly simulated, see `SIMULATED` flag) with InfluxDB write path.
+> - `modular_codebase/` — MicroPython control modules (pH/EC/CO2/O2/
+>   moisture/light/temp/humidity/pump/OLED) wired into `main.py`, plus a
+>   CPython unit-test harness (`modular_codebase/tests/`).
+> - `10_autoupdater/` — over-the-air .py update via GitHub Releases with
+>   SHA-256 verification.
+>
+> **Not implemented yet (roadmap only):** AI predictive analytics,
+> computer vision, blockchain transparency, and the ANMS components
+> described further below. Those sections describe the target design.
+
 ## **Project Overview**
 
 ### **Objective**

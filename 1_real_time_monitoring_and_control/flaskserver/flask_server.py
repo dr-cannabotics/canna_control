@@ -50,9 +50,9 @@ def status():
     return jsonify(state_dict), 200
 
 @app.route('/sensor', methods=['POST'])
-def update_sensor_data():
+def receive_sensor_data():
     global sensor_data
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     for key in sensor_data.keys():
         if key in data:
             sensor_data[key] = data[key]
@@ -63,4 +63,6 @@ def get_sensor_data():
     return jsonify(sensor_data), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=420)
+    # threaded=True: the Pico posts every second while the dashboard polls,
+    # a single-threaded dev server would deadlock both.
+    app.run(host='0.0.0.0', port=420, threaded=True)

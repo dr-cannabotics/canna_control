@@ -1,5 +1,25 @@
 ### AutoUpdater: Pico W Background Firmware Updater
 
+> **Implemented in [`firmware_update.py`](firmware_update.py).** What the script actually does:
+>
+> - This project runs as plain `.py` scripts on MicroPython (no raw
+>   flash), so "firmware update" = **swapping the .py files** from a
+>   GitHub Release.
+> - Config at the top of the file: `GITHUB_OWNER`, `GITHUB_REPO`,
+>   `WIFI_SSID` / `WIFI_PASSWORD` (keep real credentials out of git —
+>   put the file in `user.py` on the Pico or add it to `.gitignore`).
+> - The installed version is tracked in a `VERSION` file on the Pico
+>   (contents = release tag, e.g. `v1.0.0`).
+> - Integrity: `.sha256` release assets are verified before the swap;
+>   alternatively a `sha256 <file> <hash>` line in the release notes.
+> - Files are downloaded to `/staging`, verified, atomically renamed
+>   into place, `VERSION` is bumped, then `machine.reset()`.
+> - Requires `urequests` + `certifi` on the Pico:
+>   `mpremote mip install certifi`.
+>
+> To publish an update: `gh release create v1.1.0 main.py modules/*.py VERSION`
+> (plus a `.sha256` file per asset, or the hash lines in the notes).
+
 #### Overview
 The **Pico W Background Firmware Updater** is a robust system designed to keep Raspberry Pi Pico W devices up-to-date with the latest firmware releases. By integrating with GitHub, the system automatically checks for new firmware versions, downloads them, and installs the updates—all while running in the background. This ensures that the device can continue performing its primary functions without interruption, making it ideal for IoT deployments where manual updates are impractical.
 
