@@ -80,6 +80,11 @@ class NutrientController:
         self.check_interval_s = 300
         self.max_doses_per_cycle = 5
         self.cooldown_s = 900
+        #: optional multi-tank split for EC dosing, e.g.
+        #: (('nutrient_1', 0.7), ('nutrient_2', 0.3)) — set by
+        #: modules.recipes.RecipeEngine; None doses nutrient_1 alone.
+        self.nutrient_mix = None
+        self.ec_pending = []
 
         self.state = IDLE
         self.state_since_ms = ticks_ms()
@@ -191,6 +196,17 @@ class NutrientController:
         return (abs(self.last_ph - self.ph_target) <= self.ph_band
                 and abs(self.last_ec - self.ec_target) <= self.ec_band)
 
+    def _split_ec(self, total_ml):
+        """Split one EC correction over the tanks in nutrient_mix
+        proportionally; without a mix everything goes to nutrient_1."""
+        if not self.nutrient_mix:
+            return [('nutrient_1', total_ml)]
+        parts = []
+        for name, share in self.nutrient_mix:
+            if share > 0:
+                parts.append((name, total_ml * share))
+        return parts or [('nutrient_1', total_ml)]
+
     def _decide(self):
         """One dosing decision: pH first, EC only when pH is in band."""
         if self.last_ph is None or self.last_ec is None:
@@ -213,9 +229,19 @@ class NutrientController:
                     * self.ml_per_ph)
         elif abs(self.last_ec - self.ec_target) > self.ec_band:
             if self.last_ec < self.ec_target:
-                self._start_dose(
-                    'nutrient_1', (self.ec_target - self.last_ec)
-                    * self.ml_per_ec)
+                if not self.ec_pending:
+                    self.ec_pending = self._split_ec(
+                        (self.ec_target - self.last_ec) * self.ml_per_ec)
+                dosed = False
+                while self.ec_pending and not dosed:
+                    name, ml = self.ec_pending.pop(0)
+                    if name in self.pumps and ml >= 0.2:
+                        self._start_dose(name, ml)
+                        dosed = True
+                if not dosed:
+                    self.alarm = ('NO_NUTRIENT_PUMP for mix %s'
+                                  % (self.nutrient_mix,))
+                    self._enter(COOLDOWN)
             else:
                 # cannot pump nutrients back out: ask for a water flush
                 self.alarm = ('EC_HIGH (%.2f) - flush needed'

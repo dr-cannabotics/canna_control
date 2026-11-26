@@ -527,5 +527,110 @@ class TestLux(unittest.TestCase):
         self.assertIsNone(s.read_lux())
 
 
+class TestRecipes(unittest.TestCase):
+    """Dynamic nutrient recipes: ramp, calendar, mix, adaptation."""
+
+    def test_stage_targets_and_ramp(self):
+        from modules.recipes import RecipeEngine
+        eng = RecipeEngine(stage='veg', grow_day=0, calendar=[])
+        self.assertAlmostEqual(eng.target()['ec'], 1.0)
+        self.assertAlmostEqual(eng.target()['ph'], 5.9)
+        eng.grow_day = 10                      # linear ramp to ec_peak
+        self.assertAlmostEqual(eng.target()['ec'], 1.0 + 0.8 * 10 / 21,
+                               places=2)
+        eng.grow_day = 40                      # ramp capped at ec_peak
+        self.assertAlmostEqual(eng.target()['ec'], 1.8)
+
+    def test_calendar_stage_change(self):
+        from modules.recipes import RecipeEngine
+        eng = RecipeEngine(stage='veg', grow_day=0)
+        self.assertEqual(eng.stage, 'seedling')
+        eng2 = RecipeEngine(stage='veg', grow_day=40)
+        self.assertEqual(eng2.stage, 'early_bloom')
+
+    def test_strain_override(self):
+        from modules.recipes import RecipeEngine
+        eng = RecipeEngine(stage='veg', grow_day=0, calendar=[])
+        eng.set_strain('skunk', {'veg': dict(ec_peak=2.0)})
+        eng.grow_day = 21                          # ramp complete
+        self.assertAlmostEqual(eng.target()['ec'], 2.0)
+
+    def test_mix_split(self):
+        import modules.nutrients as nm
+        anms = nm.NutrientController(FakePH(6.0), FakeEC(1.8),
+                                     ph_up=17, ph_down=18,
+                                     nutrient_1=19, nutrient_2=20)
+        self.assertEqual(anms._split_ec(10.0), [('nutrient_1', 10.0)])
+        anms.nutrient_mix = (('nutrient_1', 0.7), ('nutrient_2', 0.3))
+        parts = anms._split_ec(10.0)
+        self.assertAlmostEqual(parts[0][1], 7.0)
+        self.assertAlmostEqual(parts[1][1], 3.0)
+
+    def test_anms_doses_both_tanks(self):
+        import modules.nutrients as nutrients_mod
+        import modules.pump as pump_mod
+        clock = {'t': 0}
+        real = (nutrients_mod.ticks_ms, pump_mod.ticks_ms)
+        try:
+            nutrients_mod.ticks_ms = pump_mod.ticks_ms = \
+                lambda: clock['t']
+            anms = nutrients_mod.NutrientController(
+                FakePH(6.0), FakeEC(1.5),          # pH in band, EC low
+                ph_up=17, ph_down=18, nutrient_1=19, nutrient_2=20,
+                stirrer=22)
+            anms.check_interval_s = 0
+            anms.nutrient_mix = (('nutrient_1', 0.7), ('nutrient_2', 0.3))
+            anms.update()                          # 0.3*20=6 ml -> 70%: 4.2
+            self.assertEqual(anms.state, 'DOSE')
+            self.assertTrue(anms.pumps['nutrient_1'].is_running())
+            clock['t'] += (4.2 / 1.5 * 60 + 1) * 1000
+            anms.update()                          # dose done -> STIR
+            self.assertEqual(anms.state, 'STIR')
+            clock['t'] += (anms.stir_s + 1) * 1000
+            anms.update()                          # STIR -> SETTLE
+            self.assertEqual(anms.state, 'SETTLE')
+            clock['t'] += (anms.settle_s + 1) * 1000
+            anms.update()                          # EC still low -> tank 2
+            self.assertEqual(anms.state, 'DOSE')
+            self.assertTrue(anms.pumps['nutrient_2'].is_running())
+            self.assertFalse(anms.pumps['nutrient_1'].is_running())
+        finally:
+            nutrients_mod.ticks_ms, pump_mod.ticks_ms = real
+
+    def test_drift_adaptation_and_clamp(self):
+        from modules.recipes import RecipeEngine, ADAPT_SAMPLES, ADAPT_STEP
+        eng = RecipeEngine(stage='veg', grow_day=0, calendar=[])
+        for _ in range(ADAPT_SAMPLES):           # salt build-up seen
+            eng.observe(2.5)                     # ramped target 1.0 + 0.3
+        self.assertAlmostEqual(eng.adapt_offset, -ADAPT_STEP, places=6)
+        self.assertAlmostEqual(eng.target()['ec'], 0.9, places=2)
+        for _ in range(ADAPT_SAMPLES * 10):      # clamp at -25 %
+            eng.observe(2.5)
+        self.assertAlmostEqual(eng.adapt_offset, -0.25, places=6)
+        for _ in range(ADAPT_SAMPLES):           # in band -> decay stops
+            eng.observe(0.95)
+        self.assertAlmostEqual(eng.adapt_offset, -0.25, places=6)
+
+    def test_push_sets_anms_targets(self):
+        from modules.recipes import RecipeEngine
+
+        class FakeANMS:
+            def __init__(self):
+                self.targets = {}
+                self.nutrient_mix = None
+
+            def set_targets(self, **kw):
+                self.targets.update(kw)
+
+        eng = RecipeEngine(stage='early_bloom', grow_day=35, calendar=[])
+        anms = FakeANMS()
+        eng.bind(anms)
+        eng.set_stage('early_bloom')
+        self.assertEqual(anms.targets['ph_target'], 6.0)
+        self.assertAlmostEqual(anms.targets['ec_target'], 1.6, places=2)
+        self.assertEqual(anms.nutrient_mix, (('nutrient_1', 0.7),
+                                             ('nutrient_2', 0.3)))
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

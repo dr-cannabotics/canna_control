@@ -11,14 +11,18 @@
 >   + Pico W client (DHT22 readings; the other 19 sensor values are
 >   explicitly simulated, see `SIMULATED` flag) with InfluxDB write path.
 > - `modular_codebase/` — MicroPython control modules (pH/EC/CO2/O2/
->   moisture/light/temp/humidity/pump/OLED) wired into `main.py`, plus a
->   CPython unit-test harness (`modular_codebase/tests/`).
+>   moisture/light/temp/humidity/pump/OLED) wired into `main.py`, plus
+>   ANMS peristaltic dosing (non-blocking state machine, hard pH/EC
+>   limits), dynamic nutrient recipes (stage/day ramps, strain profiles,
+>   EC-drift adaptation), VPD control, threshold alerts (Telegram),
+>   Wi-Fi telemetry to the dashboard and an optional BH1750 lux sensor —
+>   all with a CPython unit-test harness (`modular_codebase/tests/`).
 > - `10_autoupdater/` — over-the-air .py update via GitHub Releases with
 >   SHA-256 verification.
 >
 > **Not implemented yet (roadmap only):** AI predictive analytics,
-> computer vision, blockchain transparency, and the ANMS components
-> described further below. Those sections describe the target design.
+> computer vision and blockchain transparency. Those sections describe
+> the target design.
 
 ## **Project Overview**
 
@@ -277,6 +281,15 @@ if __name__ == "__main__":
 ---
 
 ### **9. Dynamic Nutrient Recipes Based on Growth Stage**
+
+> **Implemented** in `modular_codebase/modules/recipes.py`
+> (`RecipeEngine`, enabled via `USE_RECIPE_FEEDING` in `main.py`):
+> stage-based pH/EC targets with linear EC ramps per day-in-stage,
+> per-strain override profiles, an automatic day-per-stage calendar,
+> multi-tank nutrient mixing (ANMS doses `nutrient_1`/`nutrient_2`
+> proportionally) and EC-drift adaptation that nudges the EC target
+> within ±25 % when measurements are consistently off. Real-time
+> deficiency detection via computer vision remains roadmap.
 
 #### **Nutrient AI**
 - AI adjusts nutrient recipes dynamically based on real-time plant data such as growth rate, pH balance, and electrical conductivity (EC).

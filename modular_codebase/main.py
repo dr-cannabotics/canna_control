@@ -21,6 +21,7 @@ from modules.o2 import O2Controller
 from modules.ph import pHController
 from modules.ec import ECController
 from modules.nutrients import NutrientController
+from modules.recipes import RecipeEngine
 from modules.telemetry import Telemetry
 from modules.vpd import VPDController
 from modules.alerts import (AlertManager, TelegramTransport,
@@ -85,6 +86,15 @@ ENABLE_ALERTS = False
 #: Optional BH1750 lux sensor on the display I2C bus (sda/scl from PINMAP).
 ENABLE_LUX_SENSOR = False
 
+#: Dynamic nutrient recipes: stage/day-aware pH+EC targets, strain
+#: overrides and EC-drift adaptation drive the ANMS targets
+#: (see modules/recipes.py). Requires ENABLE_ANMS.
+USE_RECIPE_FEEDING = False
+STRAIN = None                 # e.g. 'generic'; None = base table
+GROW_DAY = 0                  # day of the current run at boot
+RECIPE_CALENDAR = None        # None = built-in day-per-stage calendar;
+                              # [] to keep STAGE fixed and ramp by day only
+
 # ------------------------- profile ------------------------
 STAGES = {
     'seedling': dict(light_hours=20, intensity=35, temp=(22, 26), rh=(55, 70)),
@@ -126,6 +136,11 @@ def main():
     anms = None
     if ENABLE_ANMS:
         anms = NutrientController(ctl['ph'], ctl['ec'], **ANMS_PINS)
+    recipes = None
+    if anms is not None and USE_RECIPE_FEEDING:
+        recipes = RecipeEngine(stage=STAGE, strain=STRAIN,
+                               grow_day=GROW_DAY, calendar=RECIPE_CALENDAR)
+        recipes.bind(anms)
     tel = None
     if ENABLE_TELEMETRY:
         tel = Telemetry(WIFI_SSID, WIFI_PASSWORD, DASHBOARD_URL)
@@ -163,9 +178,13 @@ def main():
         wet = ctl['soil'].irrigate_if_needed(ctl['pump'],
                                              dry_pct=35, wet_pct=60)
         if anms is not None:
+            if recipes is not None:
+                recipes.update()
             anms.update()
         ph = ctl['ph'].get_ph_level()
         ec = ctl['ec'].get_ec_level()
+        if recipes is not None:
+            recipes.observe(ec)
         ctl['lcd'].show_status(t, h, co2,
                                ctl['soil'].get_moisture_percent(), wet)
         lux = ctl['lux']
@@ -177,11 +196,15 @@ def main():
         if al is not None:
             al.evaluate({'temp': t, 'rh': h, 'co2': co2, 'ph': ph, 'ec': ec})
         anms_s = anms.status()['state'] if anms else '-'
+        rec_s = ('%s d%d EC%.2f' % (recipes.status()['stage'],
+                                    recipes.status()['grow_day'],
+                                    recipes.status()['ec_target'])
+                 if recipes is not None else '-')
         print('T={}C RH={}% CO2={}ppm pH={} EC={} moist={}% pump={} anms={}'
-              ' vpd={} lux={}'
+              ' vpd={} lux={} recipe={}'
               .format(t, h, co2, ph, ec,
                       ctl['soil'].get_moisture_percent(), wet, anms_s,
-                      vpd_s, lux_val))
+                      vpd_s, lux_val, rec_s))
         time.sleep(2)
 
 
